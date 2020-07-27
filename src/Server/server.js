@@ -50,31 +50,43 @@ app.get("/api/profile", (req, res) => {
             res.json(profile)
         })
     }
-
-
-
 })
 
 // Handles Authentication
 app.post("/api/login", (req, res) => {
-    console.log(req.headers.cookie)
+    //console.log(req.headers.cookie)
     if (valid.login(req.body)) {
         const creds = {
             name: req.body.name.toString().toLowerCase().trim(),
             password: req.body.password.toString(),
             created: new Date()
         }
-        mongodb.loginUser(creds, req, res)
-
+        //PROMISES ARE GOOD
+        mongodb.loginUserPromise(creds).then(result => {
+            console.log("after calling mongo")
+            //console.log(result)
+            if (result == true) {
+                res.status(200)
+                // CHANGE THE VAL
+                res.cookie(name = "id", val = creds.name, { signed: true })
+                res.json({
+                    message: "Sucessful Login/Account Created",
+                })
+            }
+            else {
+                res.status(422)
+                res.json({
+                    message: "Wrong password"
+                })
+            }
+        })
     }
     else {
         res.status(422)
-
         res.json({
             message: "Invalid Data Recieved"
         })
     }
-
 })
 
 // Logs out by deleting cookie
@@ -85,3 +97,6 @@ app.post("/api/logout", (req, res) => {
         message: "Logged out successful"
     })
 })
+
+
+
