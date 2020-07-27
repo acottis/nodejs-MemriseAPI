@@ -33,7 +33,7 @@ logout.addEventListener('click', (event) => {
     fetch(API_URL + LOGOUT_URL, {
         method: 'POST',
         credentials: 'include',
-    }).then(function (res) {       
+    }).then(function (res) {      
         document.location.href = '/'
         res.json()
 })
