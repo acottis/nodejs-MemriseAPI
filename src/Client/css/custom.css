@@ -1,0 +1,14 @@
+.title {
+    text-align: center;
+}
+
+.login-form,
+.svr-res,
+.loading {
+    width : 50%;
+    margin: 0 auto;
+}
+
+.loading .svr-res {
+    text-align: center;
+}
