@@ -4,9 +4,9 @@ Web API that interacts with language learning website Memrise
 
 # Use
 Frontend
-Cd src/Client
-static-server.cmd
+static-server.cmd .\src\Client\
 
 Backend
+cd src\server
 npm run dev
 npm start

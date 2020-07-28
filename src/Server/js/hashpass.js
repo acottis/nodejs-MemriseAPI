@@ -1,6 +1,6 @@
 const crypto = require('crypto')
+const constant = require('constants')
 
-const SALT_LEN = 16
 
 const genRandomString = function (length) {
     return crypto.randomBytes(Math.ceil(length / 2))
@@ -9,18 +9,24 @@ const genRandomString = function (length) {
 };
 
 
-const sha512 = exports.sh512 = function (password, salt) {
+function sha512 (password, salt) {
     var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
     hash.update(password);
     var value = hash.digest('hex');
     return value
 };
 
-exports.saltHashPassword = function (userpassword) {
-    var salt = genRandomString(SALT_LEN); /** Gives us salt of length 16 */
+function saltHashPassword (userpassword) {
+    var salt = genRandomString(constant.SALT_LEN); /** Gives us salt of length 16 */
     var hash = sha512(userpassword, salt);
     return {
         salt: salt,
         password: hash
     }
+}
+
+
+module.exports = {
+    saltHashPassword,
+    sha512,
 }

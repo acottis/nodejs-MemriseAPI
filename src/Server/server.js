@@ -22,7 +22,6 @@ app.listen(constant.PORT, () => {
     console.log("Listening on: " + constant.API_URL + ":" + constant.PORT)
 })
 
-
 // Test URL
 app.get("/api", (req, res) => {
     console.log("안녕!")
@@ -58,25 +57,24 @@ app.post("/api/login", (req, res) => {
     if (valid.login(req.body)) {
         const creds = {
             name: req.body.name.toString().toLowerCase().trim(),
-            password: req.body.password.toString(),
+            password: req.body.password.toString().trim(),
             created: new Date()
         }
         //PROMISES ARE GOOD
         mongodb.loginUserPromise(creds).then(result => {
-            console.log("after calling mongo")
-            //console.log(result)
-            if (result == true) {
+            console.log(result['message'])
+            if (result['success'] == true) {
                 res.status(200)
                 // CHANGE THE VAL
                 res.cookie(name = "id", val = creds.name, { signed: true })
                 res.json({
-                    message: "Sucessful Login/Account Created",
+                    message: result['message'],
                 })
             }
             else {
                 res.status(422)
                 res.json({
-                    message: "Wrong password"
+                    message: result['message']
                 })
             }
         })
