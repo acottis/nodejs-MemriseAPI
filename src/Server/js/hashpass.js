@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-const constant = require('constants')
+const constant = require('./constants')
 
 
 const genRandomString = function (length) {

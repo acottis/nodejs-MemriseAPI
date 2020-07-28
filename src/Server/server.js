@@ -34,7 +34,7 @@ app.get("/api", (req, res) => {
 // Returns profile information
 app.get("/api/profile", (req, res) => {
     id = req.signedCookies['id']
-    console.log(id)
+    console.log("cookie: ", id)
     if (id == null) {
         res.status(401)
         res.json({
@@ -42,7 +42,7 @@ app.get("/api/profile", (req, res) => {
         })
     }
     else {
-        mongodb.getProfile(name = id).then(profile => {
+        mongodb.getProfile(uuid = id).then(profile => {
             // These headers prevent access to cached content with reauth
             res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             res.setHeader("Expires", "0");
@@ -66,7 +66,7 @@ app.post("/api/login", (req, res) => {
             if (result['success'] == true) {
                 res.status(200)
                 // CHANGE THE VAL
-                res.cookie(name = "id", val = creds.name, { signed: true })
+                res.cookie(name = "id", val = result['id'], { signed: true })
                 res.json({
                     message: result['message'],
                 })
@@ -96,5 +96,7 @@ app.post("/api/logout", (req, res) => {
     })
 })
 
+
+//MEMRISE PATHS
 
 

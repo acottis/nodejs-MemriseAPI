@@ -3,7 +3,7 @@ const SALT_LEN = 16
 const API_URL = 'http://localhost'
 const PORT = 8080
 const DB = 'localhost/memrise'
-const ALLOW_USER_CREATION = false
+const ALLOW_USER_CREATION = true
 module.exports ={
     COOKIE_SECRET,
     API_URL,
