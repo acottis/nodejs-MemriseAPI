@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const valid = require('./js/isValid')
 const mongodb = require('./js/mongodb')
-const constant = require('./js/constants')
+const constant = require('./config/constants')
 
 // Set up express and configure it
 const app = express()

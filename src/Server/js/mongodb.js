@@ -2,8 +2,7 @@ const monk = require('monk')
 const { v4: uuidv4 } = require('uuid');
 
 const hash = require('./hashpass')
-const constant = require('./constants')
-const { ALLOW_USER_CREATION } = require('./constants')
+const constant = require('../config/constants')
 
 
 // Init mongodb
@@ -21,7 +20,7 @@ function getProfile(id) {
 
 function loginUserPromise(creds) {
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         //  exists = users.count({ "name": req.name }).then(exists => {
         user = users.findOne({ "name": creds.name }).then(user => {
             console.log(user)
@@ -30,7 +29,7 @@ function loginUserPromise(creds) {
             uuid = uuidv4()
 
             // If user does not exist register them
-            if (!user && ALLOW_USER_CREATION == true) {
+            if (!user && constant.ALLOW_USER_CREATION == true) {
 
                 console.log("User does not exist")
 
