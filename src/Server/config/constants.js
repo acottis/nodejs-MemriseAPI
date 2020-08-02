@@ -5,9 +5,14 @@ const PORT = 8080
 const DB = 'localhost/memrise'
 const ALLOW_USER_CREATION = true
 
-const MEMRISE_BASE_URL = 'https://www.memrise.com/'
-const MEMRISE_LOGIN_PATH = 'login/'
-const MEMRISE_GET_COURSES = 'ajax/courses/dashboard/'
+// For memrise
+const MEMRISE_BASE_URL = 'https://www.memrise.com'
+const MEMRISE_LOGIN_PATH = '/login/'
+const MEMRISE_GET_COURSES = '/ajax/courses/dashboard/'
+
+// For Papago
+const PAPAGO_MAKEID_URL = 'https://papago.naver.com/apis/tts/makeID'
+const PAPAGO_TTS_URL = 'https://papago.naver.com/apis/tts/'
 
 module.exports ={
     COOKIE_SECRET,
@@ -19,4 +24,6 @@ module.exports ={
     MEMRISE_BASE_URL,
     MEMRISE_LOGIN_PATH,
     MEMRISE_GET_COURSES,
+    PAPAGO_MAKEID_URL,
+    PAPAGO_TTS_URL,
 }

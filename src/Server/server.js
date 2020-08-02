@@ -7,6 +7,7 @@ const helmet = require('helmet')
 const valid = require('./js/isValid')
 const mongodb = require('./js/mongodb')
 const constant = require('./config/constants')
+const mem_api = require('./MemriseAPI/app')
 
 // Set up express and configure it
 const app = express()
@@ -41,7 +42,7 @@ app.get("/api/profile", async (req, res) => {
         let result = await mongodb.checkCookie(id)
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         res.setHeader("Expires", "0");
-        res.json(result)
+        res.json(result['profile']['name'])
     }
     catch (error) {
         res.status(401)
@@ -94,6 +95,7 @@ app.post("/api/logout", (req, res) => {
     res.json({
         message: "Logged out successful"
     })
+    console.log("hello World")
 })
 
 
@@ -123,6 +125,76 @@ app.post("/api/memrise/creds", async (req, res) => {
         res.status(401)
         res.json({
             message: "Something went wrong"
+        })
+    }
+})
+
+// Returns list of courses
+app.get("/api/memrise/courses", async (req, res) => {
+    const id = req.signedCookies['id']
+    try {
+        let result = await mongodb.checkCookie(id)
+
+        try {
+            // let result = await mongodb.addMemriseCreds(id, req.body)
+            // console.log(result)
+            const api = new mem_api.MemriseAPI()
+            const courses = await api.get_course_list(id)
+            res.status(200)
+            res.json(courses)
+
+            // Add them to database
+            mongodb.addCourses(id, courses)
+        }
+        catch (e) {
+            console.log(e)
+            res.status(500)
+            res.json({
+                message: "Something went wrong"
+            })
+        }
+    }
+    catch (e) {
+        res.status(401)
+        res.json({
+            message: result['message']
+        })
+    }
+})
+
+// Returns data from a course ID
+app.get("/api/memrise/course", async (req, res) => {
+    const id = req.signedCookies['id']
+    try {
+        let result = await mongodb.checkCookie(id)
+
+        try {
+            const api = new mem_api.MemriseAPI()
+            const words = await api.get_word_list(id, req.query.url)
+            res.status(200)
+            res.json(words) 
+            // let result = await mongodb.addMemriseCreds(id, req.body)
+            // console.log(result)
+            // const api = new mem_api.MemriseAPI(id)
+            // const courses = await api.wrapper()
+            // res.status(200)
+            // res.json(courses)
+
+            // // Add them to database
+            // mongodb.addCourses(id, courses)
+        }
+        catch (e) {
+            console.log(e)
+            res.status(500)
+            res.json({
+                message: "Something went wrong"
+            })
+        }
+    }
+    catch (e) {
+        res.status(401)
+        res.json({
+            message: result['message']
         })
     }
 })

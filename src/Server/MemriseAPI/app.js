@@ -1,6 +1,6 @@
 
 const constant = require('../config/constants')
-const secret = require('../config/secrets')
+const mongodb = require('../js/mongodb')
 
 const qs = require('qs');
 const superagent = require('superagent');
@@ -11,8 +11,7 @@ const cheerio = require('cheerio')
 
 class MemriseAPI {
 
-    constructor(course) {
-        this.course_url = constant.MEMRISE_BASE_URL + 'course/5757638/daneoneun-sinaessi-wihae-baeugi-pilyohaeyo/'
+    constructor(id) {
         this.login_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_LOGIN_PATH
         this.get_course_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_GET_COURSES
 
@@ -22,6 +21,11 @@ class MemriseAPI {
 
     }
 
+    async get_login_creds(id){
+        const profile = await mongodb.getProfile(id)   
+        const creds = profile['memrise']
+        this.creds = creds      
+    }
     // Logins in and gives this.agent all the cookies
     // TODO: return some kind of success or fail status
     async login() {
@@ -31,8 +35,8 @@ class MemriseAPI {
             const raw_csrf = login_page.text.match(/value="\S{10,}/gi) + ""
             this.middlwaretoken = raw_csrf.split(/"/)[1]
             this.data = qs.stringify({
-                'username': secret.MEMRISE_USERNAME,
-                'password': secret.MEMORISE_PASSWORD,
+                'username': this.creds['username'],
+                'password': this.creds['password'],
                 'csrfmiddlewaretoken': this.middlwaretoken,
             })
 
@@ -49,41 +53,39 @@ class MemriseAPI {
         }
     }
 
-    // Tests that I can get to a page with authorization
-    async test() {
-        try {
-            const page = await this.agent.get(this.course_url)
-            console.log(page)
-        }
-        catch (err) {
-            // console.log(err)
-        }
-    }
+    // Scrapes the course names and data
+    async scrapeCourses() {
 
-    async getCourses() {
+        let course_array = []
+
         try {
             const courses = await this.agent
                 .get(this.get_course_url)
                 .query({ courses_filter: 'learning', category_id: 8 })
 
             for (const course in courses.body['courses']) {
-                console.log(courses.body['courses'][course]['slug'])
-                console.log(courses.body['courses'][course]['url'])
+                // console.log(courses.body['courses'][course]['slug'])
+                // console.log(courses.body['courses'][course]['url'])
+                course_array.push({id: courses.body['courses'][course]['id'], name: courses.body['courses'][course]['name'], url: courses.body['courses'][course]['url'] })
             }
+            //console.log(course_array)
+            return course_array
 
         }
         catch (err) {
             console.log(err)
+            return err
         }
     }
 
     // Grabes the English words and their translations from given memrise course
-    async getCourseWords() {
+    async scrapeCourseWords(course) {
         try {
-            const page = await this.agent.get(this.course_url)
+            const page = await this.agent.get(constant.MEMRISE_BASE_URL + course)
 
+            console.log("Beginning Scraping: " + constant.MEMRISE_BASE_URL + course)
             const $ = cheerio.load(page.text)
-
+            
             const kr_words = []
             const en_words = []
             const kr_column = $('.col_a.col.text')
@@ -94,25 +96,42 @@ class MemriseAPI {
                 .each(function (i, div) {
                     en_words.push($(div).text())
                 })
-            console.log(kr_words)
-            console.log(en_words)
+
+            let words = []
+            kr_words.forEach((element, i) => {
+                words.push({kr: kr_words[i], en: en_words[i]})
+                
+            });
+
+            return words
 
         }
         catch (err) {
             console.log(err)
+            return err
         }
     }
 
-    async wrapper() {
-        await this.login()
-        // await this.getCourseWords()
-        // await this.test()
-        await this.getCourses()
+    // Returns the list of courses for a given user
+    async get_course_list(id) {
+        await this.get_login_creds(id)
+        await this.login()        
+        return await this.scrapeCourses()
+    }
+
+    async get_word_list(id, url){
+        await this.get_login_creds(id)
+        await this.login() 
+        return await this.scrapeCourseWords(url)
     }
 
 }
 
 
-api = new MemriseAPI()
+//api = new MemriseAPI()
 
-api.wrapper()
+//api.wrapper()
+
+module.exports = {
+    MemriseAPI
+}

@@ -12,6 +12,15 @@ db.then(() => {
 })
 const users = db.get('users')
 
+//Adds Courses to database
+function addCourses(id, courses) {
+    users.findOneAndUpdate({ cookie_uuid: id }, {
+        $set: {
+            memrise_courses: courses,
+        }
+    })
+}
+
 // Returns the profile associated with a cookie
 function getProfile(id) {
     return users.findOne({ "cookie_uuid": id })
@@ -97,7 +106,7 @@ function addMemriseCreds(id, creds) {
                 })
             })
         }
-        catch(error){
+        catch (error) {
             console.log(error)
             reject({
                 message: "Something went wrong while adding memrise credentials"
@@ -109,7 +118,7 @@ function addMemriseCreds(id, creds) {
 // When a request for autherised reouse happens checks if cooke is valid and who it is
 function checkCookie(id) {
     return new Promise((resolve, reject) => {
-        if (!id){
+        if (!id) {
             reject({
                 message: "Access denied",
             })
@@ -119,7 +128,6 @@ function checkCookie(id) {
                 // These headers prevent access to cached content with reauth
                 resolve({
                     profile: profile,
-                    message: "Sucess"
                 })
             })
         }
@@ -132,10 +140,10 @@ function checkCookie(id) {
     })
 }
 
-
 module.exports = {
     loginUserPromise,
     getProfile,
     checkCookie,
     addMemriseCreds,
+    addCourses,
 }

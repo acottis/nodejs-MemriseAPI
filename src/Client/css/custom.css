@@ -7,7 +7,7 @@
     /*Skeletons default grid-activation width*/
     #sidebar {
         position : fixed;
-        max-width: 18%;
+        max-width: 25%;
         /*Avoids overlapping*/
     }
 }
