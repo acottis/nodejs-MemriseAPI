@@ -8,5 +8,5 @@ static-server.cmd .\src\Client\
 
 Backend
 cd src\server
-npm run dev
-npm start
+npm run dev ||| npm start
+

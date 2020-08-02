@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet')
 
 const valid = require('./js/isValid')
 const mongodb = require('./js/mongodb')
@@ -9,6 +10,8 @@ const constant = require('./config/constants')
 
 // Set up express and configure it
 const app = express()
+
+app.use(helmet())
 app.use(cors({
     origin: true,
     credentials: true
@@ -32,21 +35,18 @@ app.get("/api", (req, res) => {
 })
 
 // Returns profile information
-app.get("/api/profile", (req, res) => {
-    id = req.signedCookies['id']
-    console.log("cookie: ", id)
-    if (id == null) {
+app.get("/api/profile", async (req, res) => {
+    const id = req.signedCookies['id']
+    try {
+        let result = await mongodb.checkCookie(id)
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Expires", "0");
+        res.json(result)
+    }
+    catch (error) {
         res.status(401)
         res.json({
-            message: "Access denied"
-        })
-    }
-    else {
-        mongodb.getProfile(uuid = id).then(profile => {
-            // These headers prevent access to cached content with reauth
-            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-            res.setHeader("Expires", "0");
-            res.json(profile)
+            message: error['message']
         })
     }
 })
@@ -98,5 +98,33 @@ app.post("/api/logout", (req, res) => {
 
 
 //MEMRISE PATHS
+// Adds memrise credentials to the database (PLAINTEXT!!!!!!!!!!!)
+app.post("/api/memrise/creds", async (req, res) => {
+    const id = req.signedCookies['id']
+    try {
+        let result = await mongodb.checkCookie(id)
+    }
+    catch (e) {
+        res.status(401)
+        res.json({
+            message: result['message']
+        })
+        return
+    }
+    try {
+        let result = await mongodb.addMemriseCreds(id, req.body)
+        console.log(result)
+        res.status(200)
+        res.json({
+            message: result['message']
+        })
+    }
+    catch (e) {
+        res.status(401)
+        res.json({
+            message: "Something went wrong"
+        })
+    }
+})
 
 

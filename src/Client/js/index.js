@@ -10,8 +10,6 @@ const LOGIN_URL = '/login'
 
 loadingElement.style.display = 'none'
 
-
-
 // reglogbut.addEventListener('click', (event) => {
 
 //     console.log("button clicked")

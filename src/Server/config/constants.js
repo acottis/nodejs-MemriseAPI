@@ -7,6 +7,7 @@ const ALLOW_USER_CREATION = true
 
 const MEMRISE_BASE_URL = 'https://www.memrise.com/'
 const MEMRISE_LOGIN_PATH = 'login/'
+const MEMRISE_GET_COURSES = 'ajax/courses/dashboard/'
 
 module.exports ={
     COOKIE_SECRET,
@@ -17,4 +18,5 @@ module.exports ={
     SALT_LEN,
     MEMRISE_BASE_URL,
     MEMRISE_LOGIN_PATH,
+    MEMRISE_GET_COURSES,
 }

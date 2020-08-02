@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
 
@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/skeleton.css">
     <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/darkmode.css">
 
 
 
@@ -24,19 +25,39 @@
 
 <body>
 
+    <div id='sidebar'>
+        <h2>Menu</h4>
+
+            <button id='memrisecreds'>Memrise Login</button>
+            <button>test</button>
+            <button>test</button>
+            <button>test</button>
+            <button id='logoutbutton'>logout</button>
+
+    </div>
+
     <header>
         <h1 class="title">DASHBOARD</h1>
-        <button id='logoutbutton'>logout</button>
+
     </header>
+
     <main>
-        
+
+        <form class="login-form" id='login-memrise-form' style='display:none'>
+            <h4 id='memrise-creds'>Please Enter Memrise Credentials</h4>
+            <label for="username">사용자 명</label>
+            <input class="u-full-width" type="text" id="username" name="username">
+            <label for="password">비밀번호</label>
+            <input class="u-full-width" type="password" id="password" name="password">
+            <button id='memrise-creds' class="button-primary">Send Creds</button>
+        </form>
+
         <div class="svr-res">
 
         </div>
 
-        <div class="loading">
-            <img src="img/Loading.gif" alt="">
-        </div>
+        <div class="loader" style='display:none'></div>
+
     </main>
 
     <!-- Scripts
