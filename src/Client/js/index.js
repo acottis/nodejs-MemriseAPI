@@ -3,7 +3,7 @@ const svrout = document.querySelector('.svr-res')
 // const reglogbut = document.getElementById('reglogbut')
 // const reglogsub = document.getElementById('reglogsub')
 
-const loadingElement = document.querySelector('.loading')
+const loadingElement = document.querySelector('.loader')
 const API_URL = 'http://localhost:8080/api'
 // const REGISTER_URL = '/Register'
 const LOGIN_URL = '/login'
