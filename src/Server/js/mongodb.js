@@ -116,7 +116,7 @@ function addMemriseCreds(id, creds) {
 }
 
 // When a request for autherised reouse happens checks if cooke is valid and who it is
-function checkCookie(id) {
+async function checkCookie(id) {
     return new Promise((resolve, reject) => {
         if (!id) {
             reject({
@@ -139,6 +139,8 @@ function checkCookie(id) {
         }
     })
 }
+
+
 
 module.exports = {
     loginUserPromise,
