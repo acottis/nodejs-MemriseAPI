@@ -2,6 +2,7 @@ const superagent = require('superagent')
 const constants = require('../config/constants')
 const qs = require('qs');
 const fs = require('fs');
+const mongodb = require('../js/mongodb');
 
 class PapagoAPI {
     constructor(speed = 0, speaker = 'kyuri') {
@@ -11,6 +12,8 @@ class PapagoAPI {
 
         this.speaker = speaker
         this.speed = speed
+
+        this.store = 'db' // set to 'disk' for other behavior
     }
 
     // Main function that does the work
@@ -22,7 +25,7 @@ class PapagoAPI {
     // requests the TTS makeid which creates the audio file
     async request_tts(phrase) {
 
-        const data = qs.stringify({ data: '{"alpha":0,"pitch":0,"speaker":"' + this.speaker + '","speed":' + this.speed + ',"text":"' + phrase + '"}' })
+        const data = qs.stringify({ data: `{"alpha":0,"pitch":0,"speaker":"${this.speaker}","speed":${this.speed},"text":"${phrase}"}` })
         //console.log(data)
         try {
             const makeid = await this.agent
@@ -37,17 +40,24 @@ class PapagoAPI {
         }
     }
 
+    // Downloads TTS files and stores
     async download_tts_to_db(id, phrase) {
-
         console.log(id)
-
         try {
             const audio = await this.agent
                 .get(constants.PAPAGO_TTS_URL + id)
 
-            fs.writeFile(phrase + '.wav', audio.body, () => {
-                console.log("Writing " + phrase + " to file")
-            })
+            // Writes audio to db
+            if (this.store === 'db'){
+                mongodb.store_tts(audio)
+            }
+
+            // Writes audio to disk
+            if (this.store === 'disk') {
+                fs.writeFile(phrase + '.wav', audio.body, () => {
+                    console.log("Writing " + phrase + " to file")
+                })
+            }
         }
         catch (error) {
             console.log(error)
@@ -77,4 +87,4 @@ class PapagoAPI {
 
 api = new PapagoAPI(speed = 0, speaker = 'kyuri')
 
-api.get_tts('안녕하게요')
+api.get_tts('안녕하세요')

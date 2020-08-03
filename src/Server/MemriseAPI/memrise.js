@@ -57,15 +57,7 @@ router.get("/course", async (req, res) => {
         const words = await api.get_word_list(id, req.query.url)
         res.status(200)
         res.json(words)
-        // let result = await mongodb.addMemriseCreds(id, req.body)
-        // console.log(result)
-        // const api = new mem_api.MemriseAPI(id)
-        // const courses = await api.wrapper()
-        // res.status(200)
-        // res.json(courses)
 
-        // // Add them to database
-        // mongodb.addCourses(id, courses)
     }
     catch (e) {
         console.log(e)

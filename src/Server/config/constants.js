@@ -5,6 +5,8 @@ const PORT = 8080
 const DB = 'localhost/memrise'
 const ALLOW_USER_CREATION = true
 
+const COOKIE_URL_EXCEPTIONS = [`/api`, `/api/logout`, `/api/login`]
+
 // For memrise
 const MEMRISE_BASE_URL = 'https://www.memrise.com'
 const MEMRISE_LOGIN_PATH = '/login/'
@@ -26,4 +28,5 @@ module.exports ={
     MEMRISE_GET_COURSES,
     PAPAGO_MAKEID_URL,
     PAPAGO_TTS_URL,
+    COOKIE_URL_EXCEPTIONS,
 }

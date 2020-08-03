@@ -11,10 +11,8 @@ const constant = require('./config/constants')
 // Routes relating to MemriseAPI
 const { router } = require('./MemriseAPI/memrise');
 
-// Set up express and configure it
+// Initialise Express
 const app = express()
-
-const cookie_url_exceptions = [`/api`, `/api/logout`, `/api/login`]
 
 // HTTP hardening with headers
 app.use(helmet())
@@ -25,10 +23,8 @@ app.use(cors({
 }))
 // Middlewhere for handling signed cookies
 app.use(cookieParser(constant.COOKIE_SECRET));
-
 // My middlewhere that ensures requests are authenticated
-app.use(check_cookie(cookie_url_exceptions))
-
+app.use(check_cookie(constant.COOKIE_URL_EXCEPTIONS))
 // Middleware for handling json requests
 app.use(express.json())
 
@@ -39,7 +35,6 @@ app.use('/api/memrise', router)
 app.listen(constant.PORT, () => {
     console.log("Listening on: " + constant.API_URL + ":" + constant.PORT)
 })
-
 
 // Test URL
 app.get("/api", (req, res) => {

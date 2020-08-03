@@ -11,6 +11,7 @@ db.then(() => {
     console.log('Connected correctly to MongoDB')
 })
 const users = db.get('users')
+const words = db.get('words')
 
 //Adds Courses to database
 function addCourses(id, courses) {
@@ -115,37 +116,14 @@ function addMemriseCreds(id, creds) {
     })
 }
 
-// When a request for autherised reouse happens checks if cooke is valid and who it is
-async function checkCookie(id) {
-    return new Promise((resolve, reject) => {
-        if (!id) {
-            reject({
-                message: "Access denied",
-            })
-        }
-        try {
-            getProfile(uuid = id).then(profile => {
-                // These headers prevent access to cached content with reauth
-                resolve({
-                    profile: profile,
-                })
-            })
-        }
-        catch (e) {
-            console.log(e)
-            reject({
-                message: "Access denied",
-            })
-        }
-    })
+const store_tts = async (audio) =>{
+
 }
-
-
 
 module.exports = {
     loginUserPromise,
     getProfile,
-    checkCookie,
     addMemriseCreds,
     addCourses,
+    store_tts,
 }
