@@ -117,9 +117,22 @@ function addMemriseCreds(id, creds) {
     })
 }
 
-const store_tts = async (kr_phrase, audio) =>{
+const store_tts = async (kr_phrase, audio) => {
     //await words.insert({ kr: kr_phrase, tts: audio })
     return words.insert({ kr: kr_phrase, tts: audio })
+}
+
+// Returns the binary audio from the database for a given word
+const read_tts = (word = '안녕하세요') => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const doc = await words.findOne(users.findOne({ "kr": word }))
+            resolve(doc.tts.buffer)
+        }
+        catch (error) {
+            reject(`Phrase: ${word} could not be read from database`)
+        }
+    })
 }
 
 module.exports = {
@@ -128,4 +141,6 @@ module.exports = {
     addMemriseCreds,
     addCourses,
     store_tts,
+    read_tts,
 }
+

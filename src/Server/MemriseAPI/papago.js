@@ -53,8 +53,8 @@ class PapagoAPI {
 
             // Writes audio to db
             if (this.store_in_db) {
-                let test = await mongodb.store_tts(phrase, audio.body)
-                console.log(test)
+                await mongodb.store_tts(phrase, audio.body)
+                console.log("Writing " + phrase + " to db")
             }
 
             // Writes audio to disk
