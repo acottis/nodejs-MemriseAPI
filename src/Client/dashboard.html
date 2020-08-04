@@ -28,11 +28,11 @@
     <div id='sidebar'>
         <h2>Menu</h4>
 
-            <button id='memrisecreds'>Memrise Login</button>
-            <button id='courselist'>Get Course List</button>
-            <button>test</button>
-            <button>test</button>
-            <button id='logoutbutton'>logout</button>
+            <button id='memrisecreds'>Memrise Login</button></br>
+            <button id='courselist'>Get Course List</button></br>
+            <button id='uploadwords'>Upload Word List</button></br>
+            <button>Placeholder</button></br>
+            <button id='logoutbutton'>logout</button></br>
 
     </div>
 
@@ -41,7 +41,7 @@
 
     </header>
 
-    <main>
+    <main id='main'>
 
         <form class="login-form" id='login-memrise-form' style='display:none'>
             <h4 id='memrise-creds'>Please Enter Memrise Credentials</h4>
@@ -52,13 +52,29 @@
             <button id='memrise-creds' class="button-primary">Send Creds</button>
         </form>
 
-        <div class="svr-res">
+        <!-- for uploading word list -->
+        <form class="login-form" id='upload-words' style="display: none;">
+            <h4>Please enter a list of words</h4>
+            <select name="course" id="select-course">
+                <option value="">--Pick Course--</option>
+            </select>
+            <br>
+            <textarea form='upload-words' placeholder='Word1&#10;Word2&#10;Word3'></textarea>
+            <label for="select-course">Which Course to update:</label>
 
-        </div>
+        </form>
+
 
         <div class="loader" style='display:none'></div>
 
+        <div id='svr-res' class="svr-res">
+
+        </div>
+
     </main>
+
+
+
 
     <!-- Scripts
     –––––––––––––––––––––––––––––––––––––––––––––––– -->

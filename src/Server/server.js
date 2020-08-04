@@ -67,7 +67,7 @@ app.post("/api/login", async (req, res) => {
         try {
             const result = await mongodb.loginUserPromise(creds)
             res.status(200)
-            res.cookie(name = "id", val = result['id'], { signed: true })
+            res.cookie(name = "id", val = result['id'], { signed: true, httpOnly: true })
             res.json({
                 message: result['message'],
             })

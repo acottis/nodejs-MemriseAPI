@@ -44,14 +44,14 @@ class MemriseAPI {
             })
 
         } catch (err) {
-            console.error(err);
+           // console.error(err);
         }
         try {
             const logged_in_page = await this.agent.post(this.login_url).send(this.data)
             console.log(`finished login with status ${logged_in_page.status}`)
         }
         catch (err) {
-            console.log(err)
+           // console.log(err)
         }
     }
 
@@ -75,7 +75,7 @@ class MemriseAPI {
 
         }
         catch (err) {
-            console.log(err)
+            //console.log(err)
             return null
         }
     }

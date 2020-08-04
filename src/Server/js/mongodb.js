@@ -91,6 +91,7 @@ function loginUserPromise(creds) {
     })
 }
 
+// Adds the users memrise credentials to their document
 function addMemriseCreds(id, creds) {
     console.log(id, creds)
     return new Promise(async (resolve, reject) => {
@@ -116,16 +117,17 @@ function addMemriseCreds(id, creds) {
     })
 }
 
+// Stores tts in the db
 const store_tts = async (kr_phrase, audio) => {
     //await words.insert({ kr: kr_phrase, tts: audio })
     return words.insert({ kr: kr_phrase, tts: audio })
 }
 
 // Returns the binary audio from the database for a given word
-const read_tts = (word = '안녕하세요') => {
+const read_tts = (phrase) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const doc = await words.findOne(users.findOne({ "kr": word }))
+            const doc = await words.findOne(users.findOne({ "kr": phrase }))
             resolve(doc.tts.buffer)
         }
         catch (error) {

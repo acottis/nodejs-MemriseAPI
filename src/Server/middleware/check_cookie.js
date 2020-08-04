@@ -10,7 +10,6 @@ module.exports = function check_cookie(url_exceptions) {
             next();
             return
         }
-
         const id = req.signedCookies['id']
         if (!id) {
             res.status(403)

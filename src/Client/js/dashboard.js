@@ -2,15 +2,61 @@ const API_URL = 'http://localhost:8080/api'
 const PROFILE_URL = '/profile'
 const LOGOUT_URL = '/logout'
 const MEMRISE_CREDS_URL = '/memrise/creds'
-const MEMRISE_COURSES_URL = '/memrise/courses'
-const MEMRISE_COURSE_URL = '/memrise/course?'
+const MEMRISE_COURSES_URL = '/memrise/courses?'
+const MEMRISE_COURSE_URL = '/memrise/getwordlist?'
+const MEMRISE_UPLOAD_URL = '/memrise/upload'
 
 const svrout = document.querySelector('.svr-res')
 const loadingElement = document.querySelector('.loader')
 const logout = document.querySelector('#logoutbutton')
+const form_upload_words = document.querySelector('#upload-words')
 const memrise_creds_form = document.querySelector('#login-memrise-form')
 const memrise_creds_button = document.querySelector('#memrisecreds')
 const get_courses_button = document.querySelector('#courselist')
+const upload_words_button = document.querySelector('#uploadwords')
+
+const display_apps = {
+    memrisecreds: 'login-memrise-form',
+    svrout: 'svr-res',
+    uploadwords: 'upload-words',
+}
+
+
+// Hides unsused apps
+const hide_apps = (event) => {
+
+    for (let app in display_apps) {
+        document.getElementById(`${display_apps[app]}`).style.display = 'none'
+    }
+
+    let visible_app = document.querySelector(`#${display_apps[event.target.id]}`)
+    visible_app.style.display = ''
+
+
+}
+
+
+
+
+// Make the form to enter a word list appear and generate course names
+upload_words_button.addEventListener('click', async (event) => {
+
+    hide_apps(event)
+
+    //Fetch word list for the options
+    const res = await fetch(API_URL + MEMRISE_COURSES_URL + "renew=false" , {
+        method: 'GET',
+        credentials: 'include'
+    })
+    data = await res.json()
+
+    data.forEach(item => {
+        const option = document.createElement("option");
+        option.id = item['url']
+        option.innerText = item['name'];
+        document.querySelector('#select-course').appendChild(option)
+    })
+})
 
 // Listens for clicks on dynamic buttons
 document.addEventListener('click', async (event) => {
@@ -28,14 +74,7 @@ async function lookup_course(id) {
     data = await res.json()
     console.log(data)
 
-    // data.forEach(function (item, i) {
-    //     const div = document.createElement("div");
-    //     div.innerText = 'kr: '+item['kr']+' en: '+item['en']
-    //     svrout.appendChild(div)
-    // })
-
     // Generates table to output too
-
     if (document.getElementById('word-list')) {
         svrout.removeChild(document.getElementById('word-list'));
     }
@@ -64,7 +103,7 @@ async function lookup_course(id) {
 
 // gets a list of courses and returns buttons
 get_courses_button.addEventListener('click', async () => {
-    const res = await fetch(API_URL + MEMRISE_COURSES_URL, {
+    const res = await fetch(API_URL + MEMRISE_COURSES_URL + "renew=true", {
         method: 'GET',
         credentials: 'include'
     })
@@ -92,19 +131,15 @@ get_courses_button.addEventListener('click', async () => {
 })
 
 // Switches to the memrise login
-memrise_creds_button.addEventListener('click', () => {
-    svrout.style.display = 'none'
-    if (memrise_creds_form.style.display === 'none') {
-        memrise_creds_form.style.display = ''
-    }
-    else {
-        memrise_creds_form.style.display = 'none'
-        memrise_creds_form.reset()
-    }
+memrise_creds_button.addEventListener('click', (event) => {
+
+    hide_apps(event)
+
+    memrise_creds_form.reset()
 })
 
 // Runs on Page load
-function on_page_load() {
+const on_page_load = () => {
 
     fetch(API_URL + PROFILE_URL, {
         method: 'GET',
@@ -122,7 +157,6 @@ function on_page_load() {
                 svrout.textContent = data['message']
             })
         }
-        loadingElement.style.display = 'none'
     })
 
 }
@@ -140,7 +174,7 @@ logout.addEventListener('click', (event) => {
 
 //Adds memrise creds to database
 memrise_creds_form.addEventListener('submit', (event) => {
-    loadingElement.style.display = ''
+
     event.preventDefault()
     const formData = new FormData(memrise_creds_form)
     const name = formData.get("username")
@@ -153,6 +187,7 @@ memrise_creds_form.addEventListener('submit', (event) => {
 
     memrise_creds_form.style.display = 'none'
     memrise_creds_form.reset()
+    svrout.style.display = ''
 
     fetch(API_URL + MEMRISE_CREDS_URL, {
         method: 'POST',
@@ -174,10 +209,8 @@ memrise_creds_form.addEventListener('submit', (event) => {
                 //svrout.textContent = JSON.stringify(data)
                 svrout.textContent = data['message']
             })
-            //form.style.display = ''
         }
-        loadingElement.style.display = 'none'
-        svrout.style.display = ''
+
     })
 })
 

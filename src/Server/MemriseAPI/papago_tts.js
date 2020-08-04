@@ -4,7 +4,7 @@ const qs = require('qs');
 const fs = require('fs');
 const mongodb = require('../js/mongodb');
 
-class PapagoAPI {
+class PapagoTTS {
     constructor(speed = 0, speaker = 'kyuri') {
         this.agent = superagent.agent()
             .set('Referer', 'https://papago.naver.com/')
@@ -71,6 +71,6 @@ class PapagoAPI {
     }
 }
 
-api = new PapagoAPI(speed = 0, speaker = 'kyuri')
+api = new PapagoTTS(speed = 0, speaker = 'kyuri')
 
 api.get_tts('안녕하세요')

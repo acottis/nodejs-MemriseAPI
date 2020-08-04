@@ -25,31 +25,64 @@ router.post("/creds", async (req, res) => {
     }
 })
 
-// Returns list of courses
-router.get("/courses", async (req, res) => {
+// Upload word list
+router.post("/upload", async (req, res) => {
     const id = req.signedCookies['id']
+    res.status(200)
+    res.json({ message: 'hello' })
     try {
-        const api = new mem_api.MemriseAPI()
-        const courses = await api.get_course_list(id)
+        let result = await mongodb.addMemriseCreds(id, req.body)
+        console.log(result)
         res.status(200)
-        res.json(courses)
-
-        // Add them to database
-        mongodb.addCourses(id, courses)
+        res.json({
+            message: result['message']
+        })
     }
     catch (e) {
-        console.log(e)
         res.status(500)
         res.json({
             message: "Something went wrong"
         })
     }
+})
 
+// Returns list of courses
+router.get("/courses", async (req, res) => {
+    const id = req.signedCookies['id']
+
+    console.log(req.query.renew)
+    if (req.query.renew === 'false') {
+
+        const profile = await mongodb.getProfile(id)
+        const courses = profile.memrise_courses
+        res.status(200)
+        res.json(courses)
+    }
+
+    if (req.query.renew === 'true') {
+        try {
+            const api = new mem_api.MemriseAPI()
+            const courses = await api.get_course_list(id)
+            res.status(200)
+            res.json(courses)
+
+            // Add them to database
+            mongodb.addCourses(id, courses)
+        }
+        catch (e) {
+            // console.log(e)
+            res.status(500)
+            res.json({
+                message: "Something went wrong"
+            })
+        }
+    }
 })
 
 // Returns data from a course ID
-router.get("/course", async (req, res) => {
+router.get("/getwordlist", async (req, res) => {
     const id = req.signedCookies['id']
+
     try {
         const api = new mem_api.MemriseAPI()
         const words = await api.get_word_list(id, req.query.url)
@@ -58,7 +91,7 @@ router.get("/course", async (req, res) => {
 
     }
     catch (e) {
-        console.log(e)
+        //console.log(e)
         res.status(500)
         res.json({
             message: "Something went wrong"
