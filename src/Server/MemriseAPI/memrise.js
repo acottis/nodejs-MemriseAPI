@@ -29,8 +29,6 @@ router.post("/creds", async (req, res) => {
 router.get("/courses", async (req, res) => {
     const id = req.signedCookies['id']
     try {
-        // let result = await mongodb.addMemriseCreds(id, req.body)
-        // console.log(result)
         const api = new mem_api.MemriseAPI()
         const courses = await api.get_course_list(id)
         res.status(200)

@@ -103,6 +103,7 @@ function addMemriseCreds(id, creds) {
                 }
             }).then(result => {
                 resolve({
+                    email: result,
                     message: "Memrise credentials successfully added",
                 })
             })
@@ -116,8 +117,9 @@ function addMemriseCreds(id, creds) {
     })
 }
 
-const store_tts = async (audio) =>{
-
+const store_tts = async (kr_phrase, audio) =>{
+    //await words.insert({ kr: kr_phrase, tts: audio })
+    return words.insert({ kr: kr_phrase, tts: audio })
 }
 
 module.exports = {

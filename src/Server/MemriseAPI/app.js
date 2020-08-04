@@ -17,14 +17,17 @@ class MemriseAPI {
 
         this.middlwaretoken = ''
         this.data = ''
-        this.agent = superagent.agent().set('Referer', this.login_url)
+        this.agent = superagent.agent()
+            .set('Referer', this.login_url)
+            .set('user-agent', '<3 Thank you <3')
+
 
     }
 
-    async get_login_creds(id){
-        const profile = await mongodb.getProfile(id)   
+    async get_login_creds(id) {
+        const profile = await mongodb.getProfile(id)
         const creds = profile['memrise']
-        this.creds = creds      
+        this.creds = creds
     }
     // Logins in and gives this.agent all the cookies
     // TODO: return some kind of success or fail status
@@ -45,8 +48,7 @@ class MemriseAPI {
         }
         try {
             const logged_in_page = await this.agent.post(this.login_url).send(this.data)
-            //console.log(logged_in_page)
-            console.log("finished login")
+            console.log(`finished login with status ${logged_in_page.status}`)
         }
         catch (err) {
             console.log(err)
@@ -66,7 +68,7 @@ class MemriseAPI {
             for (const course in courses.body['courses']) {
                 // console.log(courses.body['courses'][course]['slug'])
                 // console.log(courses.body['courses'][course]['url'])
-                course_array.push({id: courses.body['courses'][course]['id'], name: courses.body['courses'][course]['name'], url: courses.body['courses'][course]['url'] })
+                course_array.push({ id: courses.body['courses'][course]['id'], name: courses.body['courses'][course]['name'], url: courses.body['courses'][course]['url'] })
             }
             //console.log(course_array)
             return course_array
@@ -74,7 +76,7 @@ class MemriseAPI {
         }
         catch (err) {
             console.log(err)
-            return err
+            return null
         }
     }
 
@@ -85,7 +87,7 @@ class MemriseAPI {
 
             console.log("Beginning Scraping: " + constant.MEMRISE_BASE_URL + course)
             const $ = cheerio.load(page.text)
-            
+
             const kr_words = []
             const en_words = []
             const kr_column = $('.col_a.col.text')
@@ -99,8 +101,8 @@ class MemriseAPI {
 
             let words = []
             kr_words.forEach((element, i) => {
-                words.push({kr: kr_words[i], en: en_words[i]})
-                
+                words.push({ kr: kr_words[i], en: en_words[i] })
+
             });
 
             return words
@@ -115,13 +117,13 @@ class MemriseAPI {
     // Returns the list of courses for a given user
     async get_course_list(id) {
         await this.get_login_creds(id)
-        await this.login()        
+        await this.login()
         return await this.scrapeCourses()
     }
 
-    async get_word_list(id, url){
+    async get_word_list(id, url) {
         await this.get_login_creds(id)
-        await this.login() 
+        await this.login()
         return await this.scrapeCourseWords(url)
     }
 

@@ -9,17 +9,17 @@ class PapagoAPI {
         this.agent = superagent.agent()
             .set('Referer', 'https://papago.naver.com/')
             .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36')
-
+            
         this.speaker = speaker
         this.speed = speed
 
-        this.store = 'db' // set to 'disk' for other behavior
+        this.store_in_db = true // set to 'disk' for other behavior
     }
 
     // Main function that does the work
     async get_tts(phrase) {
         const id = await this.request_tts(phrase)
-        this.download_tts(id, phrase)
+        await this.download_tts(id, phrase)
     }
 
     // requests the TTS makeid which creates the audio file
@@ -40,30 +40,6 @@ class PapagoAPI {
         }
     }
 
-    // Downloads TTS files and stores
-    async download_tts_to_db(id, phrase) {
-        console.log(id)
-        try {
-            const audio = await this.agent
-                .get(constants.PAPAGO_TTS_URL + id)
-
-            // Writes audio to db
-            if (this.store === 'db'){
-                mongodb.store_tts(audio)
-            }
-
-            // Writes audio to disk
-            if (this.store === 'disk') {
-                fs.writeFile(phrase + '.wav', audio.body, () => {
-                    console.log("Writing " + phrase + " to file")
-                })
-            }
-        }
-        catch (error) {
-            console.log(error)
-        }
-
-    }
 
     // Uses the makeID id and downloads the audio file
     async download_tts(id, phrase) {
@@ -74,9 +50,19 @@ class PapagoAPI {
             const audio = await this.agent
                 .get(constants.PAPAGO_TTS_URL + id)
 
-            fs.writeFile(phrase + '.wav', audio.body, () => {
-                console.log("Writing " + phrase + " to file")
-            })
+
+            // Writes audio to db
+            if (this.store_in_db) {
+                let test = await mongodb.store_tts(phrase, audio.body)
+                console.log(test)
+            }
+
+            // Writes audio to disk
+            if (!this.store_in_db) {
+                fs.writeFile(phrase + '.wav', audio.body, () => {
+                    console.log("Writing " + phrase + " to file")
+                })
+            }
         }
         catch (error) {
             console.log(error)
