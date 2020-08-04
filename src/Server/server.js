@@ -55,7 +55,7 @@ app.get("/api/profile", async (req, res) => {
 })
 
 // Handles Login and cookie assignment
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req, res) => {
     //console.log(req.headers.cookie)
     if (valid.login(req.body)) {
         const creds = {
@@ -63,24 +63,19 @@ app.post("/api/login", (req, res) => {
             password: req.body.password.toString().trim(),
             created: new Date()
         }
-        //PROMISES ARE GOOD
-        mongodb.loginUserPromise(creds).then(result => {
-            console.log(result['message'])
-            if (result['success'] == true) {
-                res.status(200)
-                // CHANGE THE VAL
-                res.cookie(name = "id", val = result['id'], { signed: true })
-                res.json({
-                    message: result['message'],
-                })
-            }
-            else {
-                res.status(422)
-                res.json({
-                    message: result['message']
-                })
-            }
-        })
+        // Attempts to log in and and handles failures
+        try {
+            const result = await mongodb.loginUserPromise(creds)
+            res.status(200)
+            res.cookie(name = "id", val = result['id'], { signed: true })
+            res.json({
+                message: result['message'],
+            })
+        }
+        catch (error) {
+            res.status(422)
+            res.json(error)
+        }
     }
     else {
         res.status(422)

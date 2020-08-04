@@ -30,86 +30,85 @@ function getProfile(id) {
 // Logs in users and sets cookies in DB
 function loginUserPromise(creds) {
 
-    return new Promise((resolve, reject) => {
-        //  exists = users.count({ "name": req.name }).then(exists => {
-        user = users.findOne({ "name": creds.name }).then(user => {
-            console.log(user)
+    return new Promise(async (resolve, reject) => {
 
-            // Generate cookie seed as uuidv4
-            uuid = uuidv4()
+        // Gets the user profile from database
+        user = await users.findOne({ "name": creds.name })
 
-            // If user does not exist register them
-            if (!user && constant.ALLOW_USER_CREATION == true) {
+        // Generate cookie seed as uuidv4
+        uuid = uuidv4()
 
-                console.log("User does not exist")
+        // If user does not exist register them
+        if (!user && constant.ALLOW_USER_CREATION == true) {
 
-                const pwhash = hash.saltHashPassword(creds.password)
-                const user = {
-                    "name": creds.name,
-                    "password": pwhash.password,
-                    "salt": pwhash.salt,
-                    "created": creds.created,
-                    "cookie_uuid": uuid
-                }
-                users.insert(user).then(() => {
-                    resolve({
-                        success: true,
-                        message: "User creation finished",
-                        id: uuid
-                    })
+            console.log("User does not exist")
+
+            const pwhash = hash.saltHashPassword(creds.password)
+            const user = {
+                "name": creds.name,
+                "password": pwhash.password,
+                "salt": pwhash.salt,
+                "created": creds.created,
+                "cookie_uuid": uuid
+            }
+            try {
+                // Inserts user into database as new account
+                await users.insert(user)
+                resolve({
+                    message: "User creation finished",
+                    id: uuid
                 })
             }
-            else if (!user && ALLOW_USER_CREATION == false) {
+            catch (error) {
+                reject({
+                    message: "Failed to add user to database",
+                })
+            }
+
+        }
+        else if (!user && ALLOW_USER_CREATION == false) {
+            reject({
+                message: "User Creation is Disabled",
+            })
+        }
+        else {
+            // Check user password with database and try log them in
+            new_hash = hash.sha512(creds.password, user.salt)
+            stored_hash = user.password
+            if (new_hash == stored_hash) {
+                users.findOneAndUpdate({ name: creds.name }, { $set: { cookie_uuid: uuid } })
                 resolve({
-                    success: false,
-                    message: "User Creation is Disabled",
+                    message: "Success login finished",
+                    id: uuid
                 })
             }
             else {
-                // Check user password with database and try log them in
-                new_hash = hash.sha512(creds.password, user.salt)
-                stored_hash = user.password
-                if (new_hash == stored_hash) {
-                    users.findOneAndUpdate({ name: creds.name }, { $set: { cookie_uuid: uuid } }).then(result => {
-                        console.log(result)
-                        resolve({
-                            success: true,
-                            message: "Success login finished",
-                            id: uuid
-                        })
-                    })
-                }
-                else {
-                    resolve({
-                        success: false,
-                        message: "Login Failed",
-                    })
-                }
+                reject({
+                    message: "Login Failed",
+                })
             }
-        })
+        }
     })
 }
 
 function addMemriseCreds(id, creds) {
     console.log(id, creds)
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            users.findOneAndUpdate({ cookie_uuid: id }, {
+            const doc = await users.findOneAndUpdate({ cookie_uuid: id }, {
                 $set: {
                     memrise: {
                         username: creds['name'],
                         password: creds['password']
                     }
                 }
-            }).then(result => {
-                resolve({
-                    email: result,
-                    message: "Memrise credentials successfully added",
-                })
+            })
+            resolve({
+                message: `Memrise credentials successfully added for ${doc.memrise.username}`,
             })
         }
         catch (error) {
-            console.log(error)
+            // console.log(error)
             reject({
                 message: "Something went wrong while adding memrise credentials"
             })
