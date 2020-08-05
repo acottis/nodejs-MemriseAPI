@@ -19,12 +19,11 @@ const app = express()
 
 // HTTP hardening with headers
 app.use(helmet())
-// Security hardening
+// Security hardening //TODO MAKE THIS GOOD
 app.use(cors({
     origin: true,
     credentials: true
 }))
-
 // Middlewhere for handling signed cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
 // My middlewhere that ensures requests are authenticated
@@ -39,7 +38,6 @@ app.use('/api/memrise', router)
 app.listen(process.env.PORT, () => {
     console.log("Listening on: " + process.env.API_URL + ":" + process.env.PORT)
 })
-
 
 // Test URL
 app.get("/api", (req, res) => {
