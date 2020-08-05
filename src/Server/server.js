@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet')
 
 const check_cookie = require('./middleware/check_cookie')
+const handle_error = require('./middleware/handle_error')
 const valid = require('./js/isValid')
 const mongodb = require('./js/mongodb')
 const constant = require('./config/constants')
@@ -38,6 +39,7 @@ app.use('/api/memrise', router)
 app.listen(process.env.PORT, () => {
     console.log("Listening on: " + process.env.API_URL + ":" + process.env.PORT)
 })
+
 
 // Test URL
 app.get("/api", (req, res) => {
@@ -97,3 +99,5 @@ app.post("/api/logout", (req, res) => {
     })
 })
 
+// Error handling middleware
+app.use(handle_error)

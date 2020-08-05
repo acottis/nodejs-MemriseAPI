@@ -12,6 +12,9 @@ const MEMRISE_GET_COURSES = '/ajax/courses/dashboard/'
 const PAPAGO_MAKEID_URL = 'https://papago.naver.com/apis/tts/makeID'
 const PAPAGO_TTS_URL = 'https://papago.naver.com/apis/tts/'
 
+const TTS_SPEED = 0
+const TTS_VOICE = 'kyuri'
+
 module.exports ={
     ALLOW_USER_CREATION,
     SALT_LEN,
@@ -21,4 +24,6 @@ module.exports ={
     PAPAGO_MAKEID_URL,
     PAPAGO_TTS_URL,
     COOKIE_URL_EXCEPTIONS,
+    TTS_SPEED,
+    TTS_VOICE,
 }

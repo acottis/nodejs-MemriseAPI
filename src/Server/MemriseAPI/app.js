@@ -8,11 +8,11 @@ const qs = require('qs');
 const superagent = require('superagent');
 const cheerio = require('cheerio')
 
-// FOR TESTING
-const util = require('util');
-const fs = require('fs').promises
+// // FOR TESTING
+// const util = require('util');
+// const fs = require('fs').promises
 
-//////////////////////
+// //////////////////////
 
 
 //LOGIN TO MEMRISE
@@ -136,7 +136,7 @@ class MemriseAPI {
         return await this.scrapeCourseWords(url)
     }
 
-    async upload_word_list(wordlist, url) {
+    async upload_word_list(wordlist, url, speed, voice) {
         console.log(wordlist)
         console.log(url)
         this.course = url
