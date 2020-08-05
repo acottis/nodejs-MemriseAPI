@@ -6,7 +6,7 @@ const constant = require('../config/constants')
 
 
 // Init mongodb
-const db = monk(constant.DB)
+const db = monk(process.env.DB)
 db.then(() => {
     console.log('Connected correctly to MongoDB')
 })
@@ -136,6 +136,11 @@ const read_tts = (phrase) => {
     })
 }
 
+// Returns a phrase if exists, used for input validation
+const get_phrase = async (phrase) => {
+    return doc = await words.findOne({ "kr": phrase })
+}
+
 module.exports = {
     loginUserPromise,
     getProfile,
@@ -143,5 +148,5 @@ module.exports = {
     addCourses,
     store_tts,
     read_tts,
+    get_phrase,
 }
-

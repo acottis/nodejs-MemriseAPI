@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
@@ -21,8 +23,9 @@ app.use(cors({
     origin: true,
     credentials: true
 }))
+
 // Middlewhere for handling signed cookies
-app.use(cookieParser(constant.COOKIE_SECRET));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 // My middlewhere that ensures requests are authenticated
 app.use(check_cookie(constant.COOKIE_URL_EXCEPTIONS))
 // Middleware for handling json requests
@@ -32,8 +35,8 @@ app.use(express.json())
 app.use('/api/memrise', router)
 
 // listen for new requests
-app.listen(constant.PORT, () => {
-    console.log("Listening on: " + constant.API_URL + ":" + constant.PORT)
+app.listen(process.env.PORT, () => {
+    console.log("Listening on: " + process.env.API_URL + ":" + process.env.PORT)
 })
 
 // Test URL

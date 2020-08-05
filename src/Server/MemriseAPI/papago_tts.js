@@ -18,8 +18,13 @@ class PapagoTTS {
 
     // Main function that does the work
     async get_tts(phrase) {
-        const id = await this.request_tts(phrase)
-        await this.download_tts(id, phrase)
+
+        const exists = await mongodb.get_phrase(phrase)
+        if (exists === null) {
+            console.log("Phrase doesnt exist")
+            const id = await this.request_tts(phrase)
+            await this.download_tts(id, phrase)
+        }
     }
 
     // requests the TTS makeid which creates the audio file
