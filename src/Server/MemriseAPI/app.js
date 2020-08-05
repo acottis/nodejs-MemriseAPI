@@ -136,15 +136,15 @@ class MemriseAPI {
         return await this.scrapeCourseWords(url)
     }
 
-    async upload_word_list(wordlist, url, speed, voice) {
+    async upload_word_list(wordlist, url, voice, speed) {
         console.log(wordlist)
         console.log(url)
         this.course = url
 
-        const tts = new pap_tts.PapagoTTS(0, 'kyuri')
+        const tts = new pap_tts.PapagoTTS()
 
         for (let word of wordlist) {
-            await tts.get_tts(word)
+            await tts.get_tts(word, speed, voice)
         }
 
         // For testing the database audio is good

@@ -118,9 +118,9 @@ function addMemriseCreds(id, creds) {
 }
 
 // Stores tts in the db
-const store_tts = async (kr_phrase, audio) => {
+const store_tts = async (kr_phrase, speaker, speed, audio) => {
     //await words.insert({ kr: kr_phrase, tts: audio })
-    return words.insert({ kr: kr_phrase, tts: audio })
+    return words.insert({ kr: kr_phrase, voice: speaker, speed: speed, tts: audio })
 }
 
 // Returns the binary audio from the database for a given word
