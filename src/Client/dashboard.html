@@ -55,13 +55,15 @@
         <!-- for uploading word list -->
         <form class="login-form" id='upload-words' style="display: none;">
             <h4>Please enter a list of words</h4>
+            <p>This will upload korean words, translate them, grab the korean TTS then upload them to memrise</p>
+            <label for="select-course">Which Course to update:</label>
             <select name="course" id="select-course">
                 <option value="">--Pick Course--</option>
             </select>
             <br>
-            <textarea form='upload-words' placeholder='Word1&#10;Word2&#10;Word3'></textarea>
-            <label for="select-course">Which Course to update:</label>
-
+            <textarea name=text form='upload-words' placeholder='Word1&#10;Word2&#10;Word3'></textarea>
+            <br>
+            <button id='upload-words-button' class="button-primary">Upload</button>
         </form>
 
 

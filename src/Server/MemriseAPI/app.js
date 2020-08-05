@@ -1,10 +1,18 @@
 
 const constant = require('../config/constants')
 const mongodb = require('../js/mongodb')
+const pap_tts = require('./papago_tts')
+
 
 const qs = require('qs');
 const superagent = require('superagent');
 const cheerio = require('cheerio')
+
+// FOR TESTING
+const util = require('util');
+const fs = require('fs').promises
+
+//////////////////////
 
 
 //LOGIN TO MEMRISE
@@ -14,6 +22,7 @@ class MemriseAPI {
     constructor(id) {
         this.login_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_LOGIN_PATH
         this.get_course_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_GET_COURSES
+        this.course = ''
 
         this.middlwaretoken = ''
         this.data = ''
@@ -44,14 +53,14 @@ class MemriseAPI {
             })
 
         } catch (err) {
-           // console.error(err);
+            // console.error(err);
         }
         try {
             const logged_in_page = await this.agent.post(this.login_url).send(this.data)
             console.log(`finished login with status ${logged_in_page.status}`)
         }
         catch (err) {
-           // console.log(err)
+            // console.log(err)
         }
     }
 
@@ -125,6 +134,30 @@ class MemriseAPI {
         await this.get_login_creds(id)
         await this.login()
         return await this.scrapeCourseWords(url)
+    }
+
+    async upload_word_list(wordlist, url) {
+        console.log(wordlist)
+        console.log(url)
+        this.course = url
+
+        const tts = new pap_tts.PapagoTTS(0, 'kyuri')
+
+        for (let word of wordlist) {
+            await tts.get_tts(word)
+        }
+
+        // For testing the database audio is good
+        // for (let word of wordlist) {
+        //     try {
+        //         let audio = await mongodb.read_tts(word)
+        //         await fs.writeFile(word + '.wav', audio)
+        //         console.log(`Reading ${word} from dababase`)
+        //     }
+        //     catch (error) {
+        //         console.log(error)
+        //     }
+        // }
     }
 
 }

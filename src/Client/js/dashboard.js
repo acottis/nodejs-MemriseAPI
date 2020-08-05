@@ -35,8 +35,61 @@ const hide_apps = (event) => {
 
 }
 
+// Listens for clicks on dynamic buttons
+document.addEventListener('click', async (event) => {
+    if (event.target.className === 'course-button')
+        await lookup_course(event.target.id)
+    if (event.target.id === 'upload-words-button')
+        await upload_words(event)
+
+})
+
+const upload_words = async (event) => {
+    event.preventDefault()
+
+    const formData = new FormData(form_upload_words)
+    const wordlist = formData.get('text')
+    const course = formData.get('course')
+
+    const payload = {
+        course,
+        wordlist
+    }
+    console.log(payload)
+
+    
+    //form_upload_words.style.display = 'none'
+    //form_upload_words.reset()
 
 
+    const res = await fetch(API_URL + MEMRISE_UPLOAD_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        credentials: 'include',
+        headers: {
+            'content-type': 'application/json'
+        }
+    })
+    console.log(res)
+    // }).then(function (res) {
+    //     console.log(res.status)
+    //     if (res.status == 200) {
+    //         res.json().then(function (data) {
+    //             // svrout.textContent = JSON.stringify(data)
+    //             svrout.textContent = data['message']
+    //         })
+    //     }
+    //     else {
+    //         res.json().then(function (data) {
+    //             //svrout.textContent = JSON.stringify(data)
+    //             svrout.textContent = data['message']
+    //         })
+    //     }
+
+    // })
+
+
+}
 
 // Make the form to enter a word list appear and generate course names
 upload_words_button.addEventListener('click', async (event) => {
@@ -44,7 +97,7 @@ upload_words_button.addEventListener('click', async (event) => {
     hide_apps(event)
 
     //Fetch word list for the options
-    const res = await fetch(API_URL + MEMRISE_COURSES_URL + "renew=false" , {
+    const res = await fetch(API_URL + MEMRISE_COURSES_URL + "renew=false", {
         method: 'GET',
         credentials: 'include'
     })
@@ -56,13 +109,6 @@ upload_words_button.addEventListener('click', async (event) => {
         option.innerText = item['name'];
         document.querySelector('#select-course').appendChild(option)
     })
-})
-
-// Listens for clicks on dynamic buttons
-document.addEventListener('click', async (event) => {
-    if (event.target.className === 'course-button')
-        await lookup_course(event.target.id)
-
 })
 
 // Looks up data on a specific course

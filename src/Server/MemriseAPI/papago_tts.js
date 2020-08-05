@@ -9,7 +9,7 @@ class PapagoTTS {
         this.agent = superagent.agent()
             .set('Referer', 'https://papago.naver.com/')
             .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36')
-            
+
         this.speaker = speaker
         this.speed = speed
 
@@ -71,6 +71,9 @@ class PapagoTTS {
     }
 }
 
-api = new PapagoTTS(speed = 0, speaker = 'kyuri')
+module.exports = {
+    PapagoTTS,
+}
+// api = new PapagoTTS(speed = 0, speaker = 'kyuri')
 
-api.get_tts('안녕하세요')
+// api.get_tts('안녕하세요')

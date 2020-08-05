@@ -127,7 +127,7 @@ const store_tts = async (kr_phrase, audio) => {
 const read_tts = (phrase) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const doc = await words.findOne(users.findOne({ "kr": phrase }))
+            const doc = await words.findOne({ "kr": phrase })
             resolve(doc.tts.buffer)
         }
         catch (error) {

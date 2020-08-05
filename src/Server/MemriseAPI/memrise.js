@@ -5,6 +5,21 @@ const mem_api = require('./app')
 const router = express.Router()
 
 
+// Cleans the inputs to add words to a list and returns a wordlist and URL
+const clean_upload_input = (body, course_list) => {
+    let url = ''
+    let wordlist = []
+    for (course in course_list) {
+        if (course_list[course].name === body.course)
+            url = course_list[course].url
+    }
+    // Removes the newlines and puts it into array
+    wordlist = body.wordlist.split("\r\n")
+    // Gets rid of whitespaces
+    wordlist = wordlist.map(word => word.trim())
+    return {wordlist: wordlist, url: url}
+}
+
 //MEMRISE PATHS
 // Adds memrise credentials to the database (PLAINTEXT!!!!!!!!!!!)
 router.post("/creds", async (req, res) => {
@@ -28,29 +43,30 @@ router.post("/creds", async (req, res) => {
 // Upload word list
 router.post("/upload", async (req, res) => {
     const id = req.signedCookies['id']
-    res.status(200)
-    res.json({ message: 'hello' })
     try {
-        let result = await mongodb.addMemriseCreds(id, req.body)
-        console.log(result)
+        const profile = await mongodb.getProfile(id)
+        const result = clean_upload_input(req.body, profile.memrise_courses)
+
+        // Sends the request to memrise and papago
+        const api = new mem_api.MemriseAPI()
+        await api.upload_word_list(result.wordlist, result.url)
+
+
         res.status(200)
-        res.json({
-            message: result['message']
-        })
+        res.json({ message: 'hello' })
+
     }
-    catch (e) {
+    catch (error) {
+        console.log(error)
         res.status(500)
-        res.json({
-            message: "Something went wrong"
-        })
+        res.json({message: "Something went wrong"})
     }
 })
 
-// Returns list of courses
+// Returns list of courses if pass renew=true it will go grab them again from the website, else from local db
 router.get("/courses", async (req, res) => {
     const id = req.signedCookies['id']
 
-    console.log(req.query.renew)
     if (req.query.renew === 'false') {
 
         const profile = await mongodb.getProfile(id)
@@ -90,7 +106,7 @@ router.get("/getwordlist", async (req, res) => {
         res.json(words)
 
     }
-    catch (e) {
+    catch (error) {
         //console.log(e)
         res.status(500)
         res.json({
