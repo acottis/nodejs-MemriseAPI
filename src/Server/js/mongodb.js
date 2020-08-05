@@ -118,9 +118,9 @@ function addMemriseCreds(id, creds) {
 }
 
 // Stores tts in the db
-const store_tts = async (kr_phrase, speaker, speed, audio) => {
+const store_tts = async (phrase, translation, voice, speed, audio) => {
     //await words.insert({ kr: kr_phrase, tts: audio })
-    return words.insert({ kr: kr_phrase, voice: speaker, speed: speed, tts: audio })
+    return words.insert({ phrase: phrase, translation_en: translation, voice: voice, speed: speed, tts: audio })
 }
 
 // Returns the binary audio from the database for a given word
@@ -138,7 +138,7 @@ const read_tts = (phrase) => {
 
 // Returns a phrase if exists, used for input validation
 const get_phrase = async (phrase) => {
-    return doc = await words.findOne({ "kr": phrase })
+    return doc = await words.findOne({ "phrase": phrase })
 }
 
 module.exports = {

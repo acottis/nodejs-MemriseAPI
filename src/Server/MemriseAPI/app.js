@@ -1,7 +1,9 @@
 
 const constant = require('../config/constants')
 const mongodb = require('../js/mongodb')
-const pap_tts = require('./papago_tts')
+const { PapagoTTS } = require('./papago_tts')
+const { Papago_Translate } = require('./papago_translate')
+
 
 
 const qs = require('qs');
@@ -137,15 +139,48 @@ class MemriseAPI {
     }
 
     async upload_word_list(wordlist, url, voice, speed) {
+
+        // Initial worker classes
+        const translate = new Papago_Translate()
+        const papago_tts = new PapagoTTS()
+
+        console.log(`Beginning adding words to ${url}`)
         console.log(wordlist)
-        console.log(url)
-        this.course = url
 
-        const tts = new pap_tts.PapagoTTS()
 
+        // Main loop for creating wordlist from cache (db) and from papago
         for (let word of wordlist) {
-            await tts.get_tts(word, speed, voice)
+            let exists = await mongodb.get_phrase(word)
+            
+            if (exists === null) {
+                let translated_word = await translate.get(word)
+                let tts = await papago_tts.get_tts(word, speed, voice)
+                let result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
+                console.log(result)
+            }
+            else{
+                console.log(`Cache hit for: ${word}`)
+            }
         }
+
+        //TODO: LOOP TO UPLOAD WORDS
+        // LOOP...
+
+
+        ///////////////////////////
+
+        // // Writes audio to db
+        // if (this.store_in_db) {
+        //     await mongodb.store_tts(this.phrase, this.speaker, this.speed, audio.body)
+        //     console.log(`Writing ${this.phrase} to db`)
+        // }
+
+        // // Writes audio to disk || FOR TESTING
+        // if (!this.store_in_db) {
+        //     fs.writeFile(this.phrase + '.wav', audio.body, () => {
+        //         console.log(`Writing ${this.phrase} to disk`)
+        //     })
+        // }
 
         // For testing the database audio is good
         // for (let word of wordlist) {
