@@ -7,6 +7,7 @@ const COOKIE_URL_EXCEPTIONS = [`/api`, `/api/logout`, `/api/login`]
 const MEMRISE_BASE_URL = 'https://app.memrise.com'
 const MEMRISE_LOGIN_PATH = '/login/'
 const MEMRISE_GET_COURSES = '/ajax/courses/dashboard/'
+const MEMRISE_BULK_UPLOAD = '/ajax/level/add_things_in_bulk/'
 
 // For Papago
 const PAPAGO_BASE_URL = 'https://papago.naver.com/apis'
@@ -30,4 +31,5 @@ module.exports ={
     COOKIE_URL_EXCEPTIONS,
     TTS_SPEED,
     TTS_VOICE,
+    MEMRISE_BULK_UPLOAD,
 }

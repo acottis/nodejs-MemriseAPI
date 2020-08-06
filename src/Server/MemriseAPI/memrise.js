@@ -1,6 +1,6 @@
 const express = require('express')
 const mongodb = require('../js/mongodb')
-const mem_api = require('./app')
+const mem_api = require('./api')
 const constant = require('../config/constants')
 
 const router = express.Router()
@@ -50,7 +50,7 @@ router.post("/upload", async (req, res) => {
 
         // Sends the request to memrise and papago
         const api = new mem_api.MemriseAPI()
-        await api.upload_word_list(result.wordlist, result.url, constant.TTS_VOICE, constant.TTS_SPEED)
+        await api.upload_word_list(result.wordlist, result.url, constant.TTS_VOICE, constant.TTS_SPEED, id)
 
 
         res.status(200)

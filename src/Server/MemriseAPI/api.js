@@ -1,13 +1,11 @@
-
 const constant = require('../config/constants')
 const mongodb = require('../js/mongodb')
 const { PapagoTTS } = require('./papago_tts')
 const { Papago_Translate } = require('./papago_translate')
 
-
-
 const qs = require('qs');
 const superagent = require('superagent');
+
 const cheerio = require('cheerio')
 
 // // FOR TESTING
@@ -24,20 +22,22 @@ class MemriseAPI {
     constructor(id) {
         this.login_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_LOGIN_PATH
         this.get_course_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_GET_COURSES
-        this.course = ''
+        this.bulk_add_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_BULK_UPLOAD
 
         this.middlwaretoken = ''
         this.data = ''
         this.agent = superagent.agent()
             .set('Referer', this.login_url)
-            .set('user-agent', '<3 Thank you <3')
+            .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36')
+        //  .set('user-agent', '<3 Thank you <3')
 
 
     }
 
     async get_login_creds(id) {
-        const profile = await mongodb.getProfile(id)
-        const creds = profile['memrise']
+        console.log(id)
+        this.profile = await mongodb.getProfile(id)
+        const creds = this.profile['memrise']
         this.creds = creds
     }
     // Logins in and gives this.agent all the cookies
@@ -58,7 +58,10 @@ class MemriseAPI {
             // console.error(err);
         }
         try {
-            const logged_in_page = await this.agent.post(this.login_url).send(this.data)
+            const logged_in_page = await this.agent
+                .post(this.login_url)
+                .send(this.data)
+
             console.log(`finished login with status ${logged_in_page.status}`)
         }
         catch (err) {
@@ -132,40 +135,77 @@ class MemriseAPI {
         return await this.scrapeCourses()
     }
 
+    // Main function for scraping lists from a given course
     async get_word_list(id, url) {
         await this.get_login_creds(id)
         await this.login()
         return await this.scrapeCourseWords(url)
     }
 
-    async upload_word_list(wordlist, url, voice, speed) {
+    // Adds a list of words and their translations to a given course
+    async bulk_add_words(course, id) {
+        await this.get_login_creds(id)
+        await this.login()
+        try {
 
+            const csv = "Hello,Hello"
+
+            // const data = qs.stringify({
+            //     word_delimiter: 'comma',
+            //     data: csv,
+            //     level_id: '12488818',
+            // })
+
+            var data = 'word_delimiter=comma&data=hello%%2Chello%%0Ahelp%%2Cme%%0Aplease%%2C+End+ME&level_id=12488818';
+
+            // const data = {
+            //     word_delimiter: 'comma',
+            //     data: 'fdsfsd0, sfdfsdfsd',
+            //     level_id: '12488818',
+            // }
+
+            console.log(data)
+            //console.log(course)
+            const response = await this.agent
+                .post('https://app.memrise.com/ajax/level/add_things_in_bulk/')
+                .send(data)
+                .withCredentials()
+            //console.log(response.request)
+            console.log(response.body)
+            console.log(`Bulk add status: ${response.status}`)
+
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    async upload_word_list(wordlist, course_url, voice, speed, id) {
         // Initial worker classes
         const translate = new Papago_Translate()
         const papago_tts = new PapagoTTS()
 
-        console.log(`Beginning adding words to ${url}`)
+        console.log(`Beginning adding words to ${course_url}`)
         console.log(wordlist)
-
 
         // Main loop for creating wordlist from cache (db) and from papago
         for (let word of wordlist) {
             let exists = await mongodb.get_phrase(word)
-            
+
             if (exists === null) {
                 let translated_word = await translate.get(word)
                 let tts = await papago_tts.get_tts(word, speed, voice)
                 let result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
                 console.log(result)
             }
-            else{
+            else {
                 console.log(`Cache hit for: ${word}`)
             }
         }
-
-        //TODO: LOOP TO UPLOAD WORDS
+        //TODO: LOOP TO UPLOAD WORDS and TTS
         // LOOP...
 
+        await this.bulk_add_words(course_url, id)
 
         ///////////////////////////
 
