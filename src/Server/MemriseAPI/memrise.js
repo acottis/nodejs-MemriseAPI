@@ -18,6 +18,10 @@ const clean_upload_input = (body, course_list) => {
     wordlist = body.wordlist.split("\r\n")
     // Gets rid of whitespaces
     wordlist = wordlist.map(word => word.trim())
+    // Gets rid of blank rows
+    wordlist = wordlist.filter(word => {
+        return word != null && word != ''
+    })
     return {wordlist: wordlist, url: url}
 }
 
@@ -51,7 +55,6 @@ router.post("/upload", async (req, res) => {
         // Sends the request to memrise and papago
         const api = new mem_api.MemriseAPI()
         await api.upload_word_list(result.wordlist, result.url, constant.TTS_VOICE, constant.TTS_SPEED, id)
-
 
         res.status(200)
         res.json({ message: 'hello' })

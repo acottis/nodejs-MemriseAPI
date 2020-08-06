@@ -142,48 +142,68 @@ class MemriseAPI {
         return await this.scrapeCourseWords(url)
     }
 
+    // Gets a new crsf token which is required for the header when making post requests
+    async get_new_csrf_token() {
+        const response = await this.agent
+            .get('https://app.memrise.com/home')
+        let csrftoken = response.header['set-cookie'][0]
+        this.middlwaretoken = csrftoken.split(/[;=]/)[1]
+    }
+
+    // Gets the Data-level-id required to choose which course to upload the words to
+    async get_course_edit_id(url) {
+
+        //console.log(url)
+        const response = await this.agent
+            .get(constant.MEMRISE_BASE_URL + url)
+        let csrftoken = response.header['set-cookie'][0]
+        this.middlwaretoken = csrftoken.split(/[;=]/)[1]
+
+        const $ = cheerio.load(response.text)
+        const id = $('.rebrand.reverse-header-ruled.level-view').attr()['data-level-id']
+        return id
+    }
+
     // Adds a list of words and their translations to a given course
-    async bulk_add_words(course, id) {
+    async bulk_add_words(wordlist, url, id) {
         await this.get_login_creds(id)
         await this.login()
+        const level_id = await this.get_course_edit_id(url)
+        //console.log(level_id)
         try {
-
-            const csv = "Hell,Hell"
-
             const data = qs.stringify({
                 word_delimiter: 'comma',
-                data: csv,
-                level_id: '12488818',
+                data: wordlist,
+                level_id: level_id,
             })
 
-            const test = await this.agent
-                .get('https://app.memrise.com/course/5707706/wordsineedtolearnforyeseul/edit/')
-
-            let csrftoken = test.header['set-cookie'][0]
-            csrftoken = csrftoken.split(/[;=]/)
-
-            console.log(csrftoken[1])
-            console.log(data)
+            //console.log(data)
             //console.log(course)
             const response = await this.agent
-                .post('https://app.memrise.com/ajax/level/add_things_in_bulk/')
+                .post(this.bulk_add_url)
                 .set('Referer', 'https://app.memrise.com/')
-                .set('X-CSRFToken', csrftoken[1])
+                .set('X-CSRFToken', this.middlwaretoken) // This token is gathered when we get the level_id
                 .send(data)
-            //console.log(response.request)
-            console.log(response.body)
-            console.log(`Bulk add status: ${response.status}`)
-
+            //console.log(response.body)
+            console.log(`Bulk add status: ${response.body['success']}`)
         }
         catch (error) {
             console.log(error)
         }
     }
 
+    // Main entry function for uploading wordlist
     async upload_word_list(wordlist, course_url, voice, speed, id) {
         // Initial worker classes
         const translate = new Papago_Translate()
         const papago_tts = new PapagoTTS()
+
+        //console.log(course_url)
+
+        let csv = ''
+        let translated_word = ''
+        let tts = ''
+        let result = ''
 
         console.log(`Beginning adding words to ${course_url}`)
         console.log(wordlist)
@@ -193,19 +213,24 @@ class MemriseAPI {
             let exists = await mongodb.get_phrase(word)
 
             if (exists === null) {
-                let translated_word = await translate.get(word)
-                let tts = await papago_tts.get_tts(word, speed, voice)
-                let result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
-                console.log(result)
+                translated_word = await translate.get(word)
+                tts = await papago_tts.get_tts(word, speed, voice)
+                result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
+                csv += `${word},${translated_word}\n`
+                //console.log(result)
             }
             else {
                 console.log(`Cache hit for: ${word}`)
+                csv += `${word},${exists['translation']}\n`
             }
-        }
-        //TODO: LOOP TO UPLOAD WORDS and TTS
-        // LOOP...
 
-        await this.bulk_add_words(course_url, id)
+        }
+
+        console.log(csv)
+        await this.bulk_add_words(csv, course_url, id)
+
+        // TODO UPLOAD AUDIO
+
 
         ///////////////////////////
 
