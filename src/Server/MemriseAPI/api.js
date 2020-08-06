@@ -27,9 +27,8 @@ class MemriseAPI {
         this.middlwaretoken = ''
         this.data = ''
         this.agent = superagent.agent()
-            .set('Referer', this.login_url)
-            .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36')
-        //  .set('user-agent', '<3 Thank you <3')
+            //    .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36')
+            .set('user-agent', '<3 Thank you <3')
 
 
     }
@@ -44,7 +43,7 @@ class MemriseAPI {
     // TODO: return some kind of success or fail status
     async login() {
         try {
-            const login_page = await this.agent.get(this.login_url)
+            const login_page = await this.agent.get(this.login_url).set('Referer', this.login_url)
 
             const raw_csrf = login_page.text.match(/value="\S{10,}/gi) + ""
             this.middlwaretoken = raw_csrf.split(/"/)[1]
@@ -61,6 +60,7 @@ class MemriseAPI {
             const logged_in_page = await this.agent
                 .post(this.login_url)
                 .send(this.data)
+                .set('Referer', this.login_url)
 
             console.log(`finished login with status ${logged_in_page.status}`)
         }
@@ -148,28 +148,28 @@ class MemriseAPI {
         await this.login()
         try {
 
-            const csv = "Hello,Hello"
+            const csv = "Hell,Hell"
 
-            // const data = qs.stringify({
-            //     word_delimiter: 'comma',
-            //     data: csv,
-            //     level_id: '12488818',
-            // })
+            const data = qs.stringify({
+                word_delimiter: 'comma',
+                data: csv,
+                level_id: '12488818',
+            })
 
-            var data = 'word_delimiter=comma&data=hello%%2Chello%%0Ahelp%%2Cme%%0Aplease%%2C+End+ME&level_id=12488818';
+            const test = await this.agent
+                .get('https://app.memrise.com/course/5707706/wordsineedtolearnforyeseul/edit/')
 
-            // const data = {
-            //     word_delimiter: 'comma',
-            //     data: 'fdsfsd0, sfdfsdfsd',
-            //     level_id: '12488818',
-            // }
+            let csrftoken = test.header['set-cookie'][0]
+            csrftoken = csrftoken.split(/[;=]/)
 
+            console.log(csrftoken[1])
             console.log(data)
             //console.log(course)
             const response = await this.agent
                 .post('https://app.memrise.com/ajax/level/add_things_in_bulk/')
+                .set('Referer', 'https://app.memrise.com/')
+                .set('X-CSRFToken', csrftoken[1])
                 .send(data)
-                .withCredentials()
             //console.log(response.request)
             console.log(response.body)
             console.log(`Bulk add status: ${response.status}`)

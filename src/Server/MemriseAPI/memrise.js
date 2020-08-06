@@ -60,7 +60,8 @@ router.post("/upload", async (req, res) => {
     catch (error) {
         console.log(error)
         res.status(500)
-        res.json({message: "Something went wrong"})
+        res.json(error)
+       // res.json({message: "Something went wrong"})
     }
 })
 
