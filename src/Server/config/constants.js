@@ -14,6 +14,7 @@ const PAPAGO_BASE_URL = 'https://papago.naver.com/apis'
 const PAPAGO_MAKEID_URL = '/tts/makeID'
 const PAPAGO_TTS_URL = '/tts/'
 const PAPAGO_TRANSLATE_URL = '/n2mt/translate'
+const PAPAGO_TRANSLATE_API = 'https://openapi.naver.com/v1/papago/n2mt'
 
 const TTS_SPEED = 0
 const TTS_VOICE = 'kyuri'
@@ -32,4 +33,5 @@ module.exports ={
     TTS_SPEED,
     TTS_VOICE,
     MEMRISE_BULK_UPLOAD,
+    PAPAGO_TRANSLATE_API,
 }

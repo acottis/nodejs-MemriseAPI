@@ -127,14 +127,16 @@ const store_tts = async (phrase, translation, voice, speed, audio) => {
 const read_tts = (phrase) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const doc = await words.findOne({ "kr": phrase })
+            const doc = await words.findOne({ "phrase": phrase })
             resolve(doc.tts.buffer)
         }
         catch (error) {
-            reject(`Phrase: ${word} could not be read from database`)
+            reject(`Phrase: ${phrase} could not be read from database`)
+            console.log(error)
         }
     })
 }
+
 
 // Returns a phrase if exists, used for input validation
 const get_phrase = async (phrase) => {

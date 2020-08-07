@@ -165,11 +165,7 @@ class MemriseAPI {
     }
 
     // Adds a list of words and their translations to a given course
-    async bulk_add_words(wordlist, url, id) {
-        await this.get_login_creds(id)
-        await this.login()
-        const level_id = await this.get_course_edit_id(url)
-        //console.log(level_id)
+    async bulk_add_words(wordlist, level_id) {
         try {
             const data = qs.stringify({
                 word_delimiter: 'comma',
@@ -189,6 +185,39 @@ class MemriseAPI {
         }
         catch (error) {
             console.log(error)
+        }
+    }
+
+    // TODO: Uploads the audio to the matching word
+    async upload_audio() {
+
+        //console.log(level_id)
+
+        const audio = await mongodb.read_tts("뭘 좀 드시겠어요")
+        console.log(audio)
+
+        try {
+            const data = {
+                thing_id: (null, '258724958'),
+                cell_id: (null, '3'),
+                cell_type: (null, 'column'),
+                csrfmiddlewaretoken: (null, this.middlwaretoken),
+                f: ('test.wav', audio),
+            }
+
+
+            //console.log(data)
+            //console.log(course)
+            const response = await this.agent
+                .post('https://app.memrise.com/ajax/thing/cell/upload_file/')
+                .set('Referer', 'https://app.memrise.com/')
+                // .set('X-CSRFToken', this.middlwaretoken) // This token is gathered when we get the level_id
+                .send(data)
+            //console.log(response.body)
+            console.log(`Bulk add status: ${response.body['success']}`)
+        }
+        catch (error) {
+
         }
     }
 
@@ -227,10 +256,15 @@ class MemriseAPI {
         }
 
         console.log(csv)
-        await this.bulk_add_words(csv, course_url, id)
+
+        await this.get_login_creds(id)
+        await this.login()
+        const level_id = await this.get_course_edit_id(course_url)
+        await this.bulk_add_words(csv, level_id)
+
 
         // TODO UPLOAD AUDIO
-
+        //await this.upload_audio()
 
         ///////////////////////////
 
@@ -259,7 +293,6 @@ class MemriseAPI {
         //     }
         // }
     }
-
 }
 
 
