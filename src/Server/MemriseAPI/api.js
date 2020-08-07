@@ -152,8 +152,8 @@ class MemriseAPI {
         let csrftoken = response.header['set-cookie'][0]
         this.middlwaretoken = csrftoken.split(/[;=]/)[1]
 
-        const $ = cheerio.load(response.text)
-        const id = $('.rebrand.reverse-header-ruled.level-view').attr()['data-level-id']
+        this.$ = cheerio.load(response.text)
+        const id = this.$('.rebrand.reverse-header-ruled.level-view').attr()['data-level-id']
         return id
     }
 
@@ -184,17 +184,23 @@ class MemriseAPI {
     // TODO: Uploads the audio to the matching word
     async upload_audio(phrase) {
 
+        const $ = this.$
         console.log("Uploading audio for: ", phrase)
         const audio = await mongodb.read_tts(phrase)
 
         await fs.writeFile('temp.mp3', audio)
+
+        // Gets the thing id in a convoluted way
+        const thingd_id = $('.col_a.col.text').filter(function(){
+             return $(this).text() === phrase
+        }).parent().attr()['data-thing-id']
 
         try {
             const response = await this.agent
                 .post('https://app.memrise.com/ajax/thing/cell/upload_file/')
                 .set('Referer', 'https://app.memrise.com/')
                 .type('form')
-                .field('thing_id', '258758902')
+                .field('thing_id', `${thingd_id}`)
                 .field('cell_id', '3')
                 .field('cell_type', 'column')
                 .field('csrfmiddlewaretoken', `${this.middlwaretoken}`)
@@ -233,7 +239,7 @@ class MemriseAPI {
                 result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
                 csv += `${word},${translated_word}\n`
                 // Testing audio
-                //await fs.writeFile(word + '.mp3', tts)
+                // await fs.writeFile(word + '.mp3', tts)
                 //console.log(result)
             }
             else {
@@ -248,43 +254,17 @@ class MemriseAPI {
         await this.get_login_creds(id)
         await this.login()
         const level_id = await this.get_course_edit_id(course_url)
-        // await this.bulk_add_words(csv, level_id)
-        await this.upload_audio('뭘 좀 드시겠어요?')
-
-
-        ///////////////////////////
-        // OLD TEST CODE
-        // // Writes audio to db
-        // if (this.store_in_db) {
-        //     await mongodb.store_tts(this.phrase, this.speaker, this.speed, audio.body)
-        //     console.log(`Writing ${this.phrase} to db`)
-        // }
-
-        // // Writes audio to disk || FOR TESTING
-        // if (!this.store_in_db) {
-        //     fs.writeFile(this.phrase + '.wav', audio.body, () => {
-        //         console.log(`Writing ${this.phrase} to disk`)
-        //     })
-        // }
-
-        // For testing the database audio is good
-        // for (let word of wordlist) {
-        //     try {
-        //         let audio = await mongodb.read_tts(word)
-        //         await fs.writeFile(word + '.wav', audio)
-        //         console.log(`Reading ${word} from dababase`)
-        //     }
-        //     catch (error) {
-        //         console.log(error)
-        //     }
-        // }
+        await this.bulk_add_words(csv, level_id)
+        
+        
+        // Refresh the course list IDs's
+        await this.get_course_edit_id(course_url)
+        // This uploads the audio
+        for(let word of wordlist){
+            await this.upload_audio(word)
+        }    
     }
 }
-
-
-//api = new MemriseAPI()
-
-//api.wrapper()
 
 module.exports = {
     MemriseAPI

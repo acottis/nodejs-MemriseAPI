@@ -28,7 +28,7 @@ class GoogleTTS {
             },
         }
         // Data that is sent to server
-        console.log(data)
+        // console.log(data)
         try {
             const res = await this.agent
                 .post(constant.GC_TTS_URL)
