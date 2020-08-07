@@ -1,87 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
-<head>
-
+  <head>
     <title>Memrise API</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta charset="utf-8">
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta charset="utf-8" />
 
     <!-- Mobile Specific Metas
     –––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- CSS
     –––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/skeleton.css">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/darkmode.css">
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/skeleton.css" />
+    <link rel="stylesheet" href="css/custom.css" />
+    <link rel="stylesheet" href="css/darkmode.css" />
+  </head>
 
+  <body>
+    <div id="sidebar">
+      <h4>Menu</h4>
 
-
-</head>
-
-<body>
-
-    <div id='sidebar'>
-        <h2>Menu</h4>
-
-            <button id='memrisecreds'>Memrise Login</button></br>
-            <button id='courselist'>Get Course List</button></br>
-            <button id='uploadwords'>Upload Word List</button></br>
-            <button>Placeholder</button></br>
-            <button id='logoutbutton'>logout</button></br>
-
+      <button id="memrisecreds">Memrise Login</button><br />
+      <button id="courselist">Get Course List</button><br />
+      <button id="uploadwords">Upload Word List</button><br />
+      <button>Placeholder</button><br />
+      <button id="logoutbutton">logout</button><br />
     </div>
 
     <header>
-        <h1 class="title">DASHBOARD</h1>
-
+      <h1 class="title">DASHBOARD</h1>
     </header>
 
-    <main id='main'>
+    <main id="main">
+      <form class="login-form" id="login-memrise-form" style="display: none;">
+        <h4 id="memrise-creds">Please Enter Memrise Credentials</h4>
+        <label for="username">사용자 명</label>
+        <input class="u-full-width" type="text" id="username" name="username" />
+        <label for="password">비밀번호</label>
+        <input
+          class="u-full-width"
+          type="password"
+          id="password"
+          name="password"
+        />
+        <button id="memrise-creds" class="button-primary">Send Creds</button>
+      </form>
 
-        <form class="login-form" id='login-memrise-form' style='display:none'>
-            <h4 id='memrise-creds'>Please Enter Memrise Credentials</h4>
-            <label for="username">사용자 명</label>
-            <input class="u-full-width" type="text" id="username" name="username">
-            <label for="password">비밀번호</label>
-            <input class="u-full-width" type="password" id="password" name="password">
-            <button id='memrise-creds' class="button-primary">Send Creds</button>
-        </form>
+      <!-- for uploading word list -->
+      <form class="login-form" id="upload-words" style="display: none;">
+        <h4>Please enter a list of words</h4>
+        <p>
+          This will upload korean words, translate them, grab the korean TTS
+          then upload them to memrise
+        </p>
+        <label for="select-course">Which Course to update:</label>
+        <select name="course" id="select-course">
+          <option value="">--Pick Course--</option>
+        </select>
+        <br />
+        <textarea
+          name="text"
+          form="upload-words"
+          placeholder="Word1&#10;Word2&#10;Word3"
+        ></textarea>
+        <br />
+        <button id="upload-words-button" class="button-primary">Upload</button>
+      </form>
 
-        <!-- for uploading word list -->
-        <form class="login-form" id='upload-words' style="display: none;">
-            <h4>Please enter a list of words</h4>
-            <p>This will upload korean words, translate them, grab the korean TTS then upload them to memrise</p>
-            <label for="select-course">Which Course to update:</label>
-            <select name="course" id="select-course">
-                <option value="">--Pick Course--</option>
-            </select>
-            <br>
-            <textarea name=text form='upload-words' placeholder='Word1&#10;Word2&#10;Word3'></textarea>
-            <br>
-            <button id='upload-words-button' class="button-primary">Upload</button>
-        </form>
+      <div class="loader" style="display: none;"></div>
 
-
-        <div class="loader" style='display:none'></div>
-
-        <div id='svr-res' class="svr-res">
-
-        </div>
-
+      <div id="svr-res" class="svr-res"></div>
     </main>
-
-
-
 
     <!-- Scripts
     –––––––––––––––––––––––––––––––––––––––––––––––– -->
     <script src="js/dashboard.js"></script>
-
-</body>
-
+  </body>
 </html>

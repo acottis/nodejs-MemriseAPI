@@ -1,48 +1,43 @@
 #sidebar {
-    position: relative;
+  position: relative;
 }
 
 @media (min-width: 550px) {
-
-    /*Skeletons default grid-activation width*/
-    #sidebar {
-        position : fixed;
-        max-width: 25%;
-        /*Avoids overlapping*/
-    }
+  /*Skeletons default grid-activation width*/
+  #sidebar {
+    position: fixed;
+    max-width: 25%;
+    /*Avoids overlapping*/
+  }
 }
 
-
-
 .title {
-    text-align: center;
+  text-align: center;
 }
 
 .login-form,
 .svr-res,
 .loader {
-    width : 50%;
-    margin: 0 auto;
-    word-wrap: break-word;
+  width: 50%;
+  margin: 0 auto;
+  word-wrap: break-word;
 }
 
 .loader .svr-res {
-    text-align: center;
-    
+  text-align: center;
 }
 
 textarea {
-    width: 500px;
-    height: 350px;
-  }
-
+  width: 500px;
+  height: 350px;
+}
 
 .loader {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-  }
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
