@@ -1,25 +1,18 @@
 const constant = require('../config/constants')
 const mongodb = require('../js/mongodb')
-const { PapagoTTS } = require('./papago_tts')
+const { GoogleTTS } = require('./google_tts')
 const { Papago_Translate } = require('./papago_translate')
 
 const qs = require('qs');
 const superagent = require('superagent');
-
+const fs = require('fs').promises
 const cheerio = require('cheerio')
-
-// // FOR TESTING
-// const util = require('util');
-// const fs = require('fs').promises
-
-// //////////////////////
-
 
 //LOGIN TO MEMRISE
 
 class MemriseAPI {
 
-    constructor(id) {
+    constructor() {
         this.login_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_LOGIN_PATH
         this.get_course_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_GET_COURSES
         this.bulk_add_url = constant.MEMRISE_BASE_URL + constant.MEMRISE_BULK_UPLOAD
@@ -34,7 +27,7 @@ class MemriseAPI {
     }
 
     async get_login_creds(id) {
-        console.log(id)
+        //console.log(id)
         this.profile = await mongodb.getProfile(id)
         const creds = this.profile['memrise']
         this.creds = creds
@@ -189,34 +182,29 @@ class MemriseAPI {
     }
 
     // TODO: Uploads the audio to the matching word
-    async upload_audio() {
+    async upload_audio(phrase) {
 
-        //console.log(level_id)
+        console.log("Uploading audio for: ", phrase)
+        const audio = await mongodb.read_tts(phrase)
 
-        const audio = await mongodb.read_tts("뭘 좀 드시겠어요")
-        console.log(audio)
+        await fs.writeFile('temp.mp3', audio)
 
         try {
-            const data = {
-                thing_id: (null, '258724958'),
-                cell_id: (null, '3'),
-                cell_type: (null, 'column'),
-                csrfmiddlewaretoken: (null, this.middlwaretoken),
-                f: ('test.wav', audio),
-            }
-
-
-            //console.log(data)
-            //console.log(course)
             const response = await this.agent
                 .post('https://app.memrise.com/ajax/thing/cell/upload_file/')
                 .set('Referer', 'https://app.memrise.com/')
-                // .set('X-CSRFToken', this.middlwaretoken) // This token is gathered when we get the level_id
-                .send(data)
-            //console.log(response.body)
-            console.log(`Bulk add status: ${response.body['success']}`)
+                .type('form')
+                .field('thing_id', '258758902')
+                .field('cell_id', '3')
+                .field('cell_type', 'column')
+                .field('csrfmiddlewaretoken', `${this.middlwaretoken}`)
+                .attach('f', "temp.mp3")
+
+            // console.log(response.body)
+            console.log(`TTS add status: ${response.body['success']}`)
         }
         catch (error) {
+            console.log(error)
 
         }
     }
@@ -225,9 +213,7 @@ class MemriseAPI {
     async upload_word_list(wordlist, course_url, voice, speed, id) {
         // Initial worker classes
         const translate = new Papago_Translate()
-        const papago_tts = new PapagoTTS()
-
-        //console.log(course_url)
+        const gc_tts = new GoogleTTS()
 
         let csv = ''
         let translated_word = ''
@@ -243,9 +229,11 @@ class MemriseAPI {
 
             if (exists === null) {
                 translated_word = await translate.get(word)
-                tts = await papago_tts.get_tts(word, speed, voice)
+                tts = await gc_tts.get(word, speed, voice)
                 result = await mongodb.store_tts(word, translated_word, voice, speed, tts)
                 csv += `${word},${translated_word}\n`
+                // Testing audio
+                //await fs.writeFile(word + '.mp3', tts)
                 //console.log(result)
             }
             else {
@@ -254,20 +242,18 @@ class MemriseAPI {
             }
 
         }
-
         console.log(csv)
 
+        // This code does all the GET's and POST's with the generated info
         await this.get_login_creds(id)
         await this.login()
         const level_id = await this.get_course_edit_id(course_url)
-        await this.bulk_add_words(csv, level_id)
+        // await this.bulk_add_words(csv, level_id)
+        await this.upload_audio('뭘 좀 드시겠어요?')
 
-
-        // TODO UPLOAD AUDIO
-        //await this.upload_audio()
 
         ///////////////////////////
-
+        // OLD TEST CODE
         // // Writes audio to db
         // if (this.store_in_db) {
         //     await mongodb.store_tts(this.phrase, this.speaker, this.speed, audio.body)

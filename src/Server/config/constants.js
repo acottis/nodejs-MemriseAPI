@@ -16,8 +16,15 @@ const PAPAGO_TTS_URL = '/tts/'
 const PAPAGO_TRANSLATE_URL = '/n2mt/translate'
 const PAPAGO_TRANSLATE_API = 'https://openapi.naver.com/v1/papago/n2mt'
 
-const TTS_SPEED = 0
-const TTS_VOICE = 'kyuri'
+const TTS_PITCH = 0
+const TTS_SPEED = 1
+const TTS_VOICE = "ko-KR-Wavenet-C"
+const TTS_LOCALE = "ko-KR"
+const TTS_ENCODING = "LINEAR16"
+
+
+// For google
+const GC_TTS_URL = `https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${process.env.GC_TTS_API_KEY}`
 
 module.exports ={
     PAPAGO_BASE_URL,
@@ -34,4 +41,8 @@ module.exports ={
     TTS_VOICE,
     MEMRISE_BULK_UPLOAD,
     PAPAGO_TRANSLATE_API,
+    GC_TTS_URL,
+    TTS_LOCALE,
+    TTS_PITCH,
+    TTS_ENCODING,
 }

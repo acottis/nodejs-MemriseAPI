@@ -32,21 +32,23 @@ class PapagoTTS {
         })
 
         // Data that is sent to server
-        //console.log(data)
+        console.log(data)
         try {
             const makeid = await this.agent
                 .post(constant.PAPAGO_BASE_URL + constant.PAPAGO_MAKEID_URL)
                 .type('form')
                 .send(data)
             // .buffer(true)
-            console.log(makeid.body.id)
+            //console.log(makeid.body.id)
+            console.log(makeid)
+            console.log("WHAT????")
             // No longer needed as papago fixed their site
             // const id = Buffer.from(makeid.body).toString('utf-8')
             // return JSON.parse(id)['id']
             return makeid.body.id
         }
         catch (error) {
-            //console.log(error)
+            console.log(error)
             return (new Error(`Error while obtaining tts MAKEID`))
         }
     }
