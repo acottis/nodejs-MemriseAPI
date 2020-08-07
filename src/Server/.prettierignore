@@ -1,0 +1,5 @@
+# Ignore artifacts:
+todo
+node_modules/
+.env
+.env.sample
