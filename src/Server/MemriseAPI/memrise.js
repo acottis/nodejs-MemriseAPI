@@ -7,11 +7,18 @@ const router = express.Router();
 
 // Cleans the inputs to add words to a list and returns a wordlist and URL
 const clean_upload_input = (body, course_list) => {
+
 	let url = '';
 	let wordlist = [];
 	for (course in course_list) {
-		if (course_list[course].name === body.course) url = course_list[course].url;
+		if (course_list[course].name === body.course)
+			url = course_list[course].url;
 	}
+
+	if (url === '') {
+		throw new Error("Invalid Course specified")
+	}
+
 	// Removes the newlines and puts it into array
 	wordlist = body.wordlist.split(/[\r\n]/);
 	// Gets rid of whitespaces
@@ -43,11 +50,12 @@ router.post('/creds', async (req, res) => {
 });
 
 // Upload word list
-router.post('/upload', async (req, res) => {
+router.post('/upload', async (req, res, next) => {
 	const id = req.signedCookies['id'];
 	try {
 		const profile = await mongodb.getProfile(id);
 		const result = clean_upload_input(req.body, profile.memrise_courses);
+
 		// Sends the request to memrise and papago
 		const api = new mem_api.MemriseAPI();
 		await api.upload_word_list(
@@ -59,12 +67,11 @@ router.post('/upload', async (req, res) => {
 		);
 
 		res.status(200);
-		res.json({ message: 'hello' });
+		res.json({ message: 'Words add sucessfully' });
 	} catch (error) {
-		console.log(error);
-		res.status(500);
-		res.json(error);
-		// res.json({message: "Something went wrong"})
+		// Forward error to error handler
+		res.status(500)
+		return next(error)
 	}
 });
 

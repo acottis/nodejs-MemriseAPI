@@ -136,12 +136,13 @@ class MemriseAPI {
 
 	// Gets the Data-level-id required to choose which course to upload the words to
 	async get_course_edit_id(url) {
-		//console.log(url)
+		console.log(url)
 		const response = await this.agent.get(constant.MEMRISE_BASE_URL + url);
 		let csrftoken = response.header['set-cookie'][0];
 		this.middlwaretoken = csrftoken.split(/[;=]/)[1];
 
 		this.$ = cheerio.load(response.text);
+		//console.log(response.header)
 		const id = this.$('.rebrand.reverse-header-ruled.level-view').attr()['data-level-id'];
 		return id;
 	}

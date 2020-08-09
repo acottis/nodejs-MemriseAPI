@@ -63,22 +63,10 @@ const upload_words = async (event) => {
     },
   });
   console.log(res);
-  // }).then(function (res) {
-  //     console.log(res.status)
-  //     if (res.status == 200) {
-  //         res.json().then(function (data) {
-  //             // svrout.textContent = JSON.stringify(data)
-  //             svrout.textContent = data['message']
-  //         })
-  //     }
-  //     else {
-  //         res.json().then(function (data) {
-  //             //svrout.textContent = JSON.stringify(data)
-  //             svrout.textContent = data['message']
-  //         })
-  //     }
-
-  // })
+  data = await res.json()
+  console.log(data)
+  svrout.style.display = ''
+  svrout.textContent = data['message']
 };
 
 // Make the form to enter a word list appear and generate course names
@@ -98,6 +86,8 @@ upload_words_button.addEventListener("click", async (event) => {
     option.innerText = item["name"];
     document.querySelector("#select-course").appendChild(option);
   });
+
+
 });
 
 // Looks up data on a specific course
