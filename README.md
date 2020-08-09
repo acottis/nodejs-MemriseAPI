@@ -4,7 +4,7 @@ Web API that interacts with language learning website Memrise
 
 # Use
 Frontend
-static-server.cmd .\src\Client\
+lite-server src/client
 
 Backend
 cd src\server

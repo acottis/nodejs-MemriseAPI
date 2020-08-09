@@ -13,7 +13,7 @@ const clean_upload_input = (body, course_list) => {
 		if (course_list[course].name === body.course) url = course_list[course].url;
 	}
 	// Removes the newlines and puts it into array
-	wordlist = body.wordlist.split('\r\n');
+	wordlist = body.wordlist.split(/[\r\n]/);
 	// Gets rid of whitespaces
 	wordlist = wordlist.map((word) => word.trim());
 	// Gets rid of blank rows
@@ -48,7 +48,6 @@ router.post('/upload', async (req, res) => {
 	try {
 		const profile = await mongodb.getProfile(id);
 		const result = clean_upload_input(req.body, profile.memrise_courses);
-
 		// Sends the request to memrise and papago
 		const api = new mem_api.MemriseAPI();
 		await api.upload_word_list(

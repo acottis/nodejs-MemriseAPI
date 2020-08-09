@@ -102,7 +102,8 @@ upload_words_button.addEventListener("click", async (event) => {
 
 // Looks up data on a specific course
 async function lookup_course(id) {
-  const res = await fetch(API_URL + MEMRISE_COURSE_URL + "url=" + id, {
+  // Need to ask user if they want to renew or do a cache check on server
+  const res = await fetch(API_URL + MEMRISE_COURSE_URL + "url=" + id + "&renew=true", {
     method: "GET",
     credentials: "include",
   });

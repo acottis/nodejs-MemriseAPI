@@ -1,3 +1,4 @@
+process.title = "memriseAPI"
 require('dotenv').config();
 
 const express = require('express');
