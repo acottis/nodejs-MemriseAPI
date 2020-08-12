@@ -18,6 +18,8 @@ const { router } = require('./MemriseAPI/memrise');
 // Initialise Express
 const app = express();
 
+app.set('trust proxy', 1);
+
 // HTTP hardening with headers
 app.use(helmet());
 // Security hardening //TODO MAKE THIS GOOD
@@ -73,9 +75,11 @@ app.post('/api/login', async (req, res) => {
 			const result = await mongodb.loginUserPromise(creds);
 			res.status(200);
 			res.cookie((name = 'id'), (val = result['id']), {
+				expires: new Date(Date.now() + 8 * 3600000),
 				signed: true,
 				httpOnly: true,
-				sameSite: false,
+				sameSite: 'None',
+				secure: true,
 			});
 			res.json({
 				message: result['message'],
