@@ -40,7 +40,7 @@ app.use('/api/memrise', router);
 const port = process.env.PORT || 8080
 // listen for new requests
 app.listen(port, () => {
-	console.log('Listening on: ' + process.env.API_URL + ':' + port);
+	console.log(`Listening on: ${process.env.API_URL}:${port}/api`);
 });
 
 // Test URL
