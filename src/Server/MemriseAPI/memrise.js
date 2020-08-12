@@ -76,32 +76,27 @@ router.post('/upload', async (req, res, next) => {
 });
 
 // Returns list of courses if pass renew=true it will go grab them again from the website, else from local db
-router.get('/courses', async (req, res) => {
+router.get('/courses', async (req, res, next) => {
 	const id = req.signedCookies['id'];
-
-	if (req.query.renew === 'false') {
+	try {
 		const profile = await mongodb.getProfile(id);
 		const courses = profile.memrise_courses;
-		res.status(200);
-		res.json(courses);
-	}
-
-	if (req.query.renew === 'true') {
-		try {
+		if (typeof courses !== 'undefined' && courses) {
+			res.status(200);
+			res.json(courses);
+		}
+		else {
 			const api = new mem_api.MemriseAPI();
 			const courses = await api.get_course_list(id);
 			res.status(200);
 			res.json(courses);
-
 			// Add them to database
 			mongodb.addCourses(id, courses);
-		} catch (e) {
-			// console.log(e)
-			res.status(500);
-			res.json({
-				message: 'Something went wrong',
-			});
 		}
+	}
+	catch (error) {
+		res.status(500);
+		next(error)
 	}
 });
 

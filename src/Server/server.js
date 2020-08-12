@@ -18,7 +18,26 @@ const { router } = require('./MemriseAPI/memrise');
 // Initialise Express
 const app = express();
 
-app.set('trust proxy', 1);
+let cookieSettings = {}
+if (process.env.NODE_ENV == "production") {
+	cookieSettings = {
+		expires: new Date(Date.now() + 8 * 3600000),
+		signed: true,
+		httpOnly: true,
+		sameSite: 'None',
+		secure: true,
+	}
+	app.set('trust proxy', 1);
+} else {
+    cookieSettings = {
+		expires: new Date(Date.now() + 8 * 3600000),
+		signed: true,
+		httpOnly: true,
+	}
+}
+
+console.log(cookieSettings)
+
 
 // HTTP hardening with headers
 app.use(helmet());
@@ -74,13 +93,7 @@ app.post('/api/login', async (req, res) => {
 		try {
 			const result = await mongodb.loginUserPromise(creds);
 			res.status(200);
-			res.cookie((name = 'id'), (val = result['id']), {
-				expires: new Date(Date.now() + 8 * 3600000),
-				signed: true,
-				httpOnly: true,
-				sameSite: 'None',
-				secure: true,
-			});
+			res.cookie(name = 'id', val = result['id'], cookieSettings);
 			res.json({
 				message: result['message'],
 			});

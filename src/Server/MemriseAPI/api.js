@@ -28,6 +28,9 @@ class MemriseAPI {
 		//console.log(id)
 		this.profile = await mongodb.getProfile(id);
 		const creds = this.profile['memrise'];
+		if (typeof creds === 'undefined' && !creds){
+			throw Error('No credentials stored yet!')
+		}
 		this.creds = creds;
 	}
 	// Logins in and gives this.agent all the cookies

@@ -1,29 +1,16 @@
+
+const API_URL = "http://localhost:8080/api";
+//const API_URL = "https://memrisetts.nw.r.appspot.com/api";
+
 const form = document.querySelector("form");
 const svrout = document.querySelector(".svr-res");
-// const reglogbut = document.getElementById('reglogbut')
-// const reglogsub = document.getElementById('reglogsub')
+
 
 const loadingElement = document.querySelector(".loader");
-const API_URL = "http://localhost:8080/api";
-// const REGISTER_URL = '/Register'
+
 const LOGIN_URL = "/login";
 
 loadingElement.style.display = "none";
-
-// reglogbut.addEventListener('click', (event) => {
-
-//     console.log("button clicked")
-
-//     if (reglogbut.textContent == "Register") {
-//         reglogbut.textContent = "Login"
-//         reglogsub.textContent = "Register"
-//     }
-//     else {
-//         reglogbut.textContent = "Register"
-//         reglogsub.textContent = "Login"
-//     }
-
-// })
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();

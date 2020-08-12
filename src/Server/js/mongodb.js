@@ -6,7 +6,6 @@ const constant = require('../config/constants');
 
 const uri = process.env.DB || "localhost/memrise"
 
-console.log(uri)
 // Init mongodb
 const db = monk(uri);
 db.then(() => {
