@@ -75,7 +75,7 @@ app.post('/api/login', async (req, res) => {
 			res.cookie((name = 'id'), (val = result['id']), {
 				signed: true,
 				httpOnly: true,
-				sameSite: 'none',
+				sameSite: 'None',
 			});
 			res.json({
 				message: result['message'],
