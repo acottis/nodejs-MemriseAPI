@@ -4,7 +4,8 @@ const svrout = document.querySelector(".svr-res");
 // const reglogsub = document.getElementById('reglogsub')
 
 const loadingElement = document.querySelector(".loader");
-const API_URL = "http://localhost:8080/api";
+//const API_URL = "http://localhost:8080/api";
+const API_URL = "https://memrisetts.nw.r.appspot.com/api";
 // const REGISTER_URL = '/Register'
 const LOGIN_URL = "/login";
 
