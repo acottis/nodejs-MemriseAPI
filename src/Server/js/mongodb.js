@@ -4,8 +4,11 @@ const { v4: uuidv4 } = require('uuid');
 const hash = require('./hashpass');
 const constant = require('../config/constants');
 
+const uri = process.env.DB || "localhost/memrise"
+
+console.log(uri)
 // Init mongodb
-const db = monk(process.env.DB);
+const db = monk(uri);
 db.then(() => {
 	console.log('Connected correctly to MongoDB');
 });
