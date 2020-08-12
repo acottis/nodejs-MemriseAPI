@@ -45,7 +45,7 @@ app.listen(port, () => {
 
 // Test URL
 app.get('/api', (req, res) => {
-	console.log('안녕!');
+	console.log('안녕하세요!');
 	res.cookie('Test', 'test');
 	res.json({
 		message: '안녕!',

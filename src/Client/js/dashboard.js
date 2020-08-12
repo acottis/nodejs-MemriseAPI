@@ -1,5 +1,4 @@
-//const API_URL = "http://localhost:8080/api";
-const API_URL = "https://memrisetts.nw.r.appspot.com/api";
+const API_URL = "http://localhost:8080/api";
 const PROFILE_URL = "/profile";
 const LOGOUT_URL = "/logout";
 const MEMRISE_CREDS_URL = "/memrise/creds";
