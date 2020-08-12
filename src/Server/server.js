@@ -75,13 +75,14 @@ app.post('/api/login', async (req, res) => {
 			res.cookie((name = 'id'), (val = result['id']), {
 				signed: true,
 				httpOnly: true,
-				sameSite: 'None',
+				sameSite: false,
 			});
 			res.json({
 				message: result['message'],
 			});
+			console.log(`${creds.name} has logged in`)
 		} catch (error) {
-			res.status(422);
+			res.status(403);
 			res.json(error);
 		}
 	} else {
