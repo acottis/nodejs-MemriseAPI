@@ -37,9 +37,10 @@ app.use(express.json());
 // Add routes for the memrise API
 app.use('/api/memrise', router);
 
+const port = process.env.PORT || 8080
 // listen for new requests
-app.listen(process.env.PORT, () => {
-	console.log('Listening on: ' + process.env.API_URL + ':' + process.env.PORT);
+app.listen(port, () => {
+	console.log('Listening on: ' + process.env.API_URL + ':' + port);
 });
 
 // Test URL
