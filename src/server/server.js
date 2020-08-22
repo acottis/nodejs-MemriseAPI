@@ -58,7 +58,12 @@ app.use(express.json());
 // Add routes for the memrise API
 app.use('/api/memrise', router);
 
+// Delcare port
 const port = process.env.PORT || 8080
+
+// Listen for static files
+app.use(express.static('../client'));
+
 // listen for new requests
 app.listen(port, () => {
 	console.log(`Listening on: ${process.env.API_URL}:${port}/api`);
