@@ -7,6 +7,19 @@ handlers:
   static_files: client/index.html
   upload: client/index.html
 
-- url: /(.*)
-  static_files: client/\1
-  upload: client/(.*)
+- url: /index.html
+  static_files: client/index.html
+  upload: client/index.html
+
+- url: /dashboard.html
+  static_files: client/dashboard.html
+  upload: client/dashboard.html
+
+- url: /css
+  static_dir: client/css
+
+- url: /js
+  static_dir: client/js
+
+- url: /img
+  static_dir: client/img
