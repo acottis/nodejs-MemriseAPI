@@ -1,7 +1,7 @@
 const SALT_LEN = 16;
 const ALLOW_USER_CREATION = true;
 
-const COOKIE_URL_EXCEPTIONS = [`/`,`/favicon.ico`,`/index.html`,`/dashboard.html`,`/js/index.js`,`/js/dashboard.js`,`/css/custom.css`,`/css/skeleton.css`,`/css/darkmode.css`,`/css/normalize.css`,`/api`, `/api/logout`, `/api/login`];
+const COOKIE_URL_EXCEPTIONS = [`/`,`/favicon.ico`,`/index.html`,`/js/index.js`,`/css/custom.css`,`/css/skeleton.css`,`/css/darkmode.css`,`/css/normalize.css`,`/api`, `/api/logout`, `/api/login`];
 
 // For memrise
 const MEMRISE_BASE_URL = 'https://app.memrise.com';
