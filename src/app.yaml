@@ -1,0 +1,12 @@
+runtime: nodejs12
+instance_class: F1
+
+
+handlers:
+- url: /
+  static_files: client/index.html
+  upload: client/index.html
+
+- url: /(.*)
+  static_files: client/\1
+  upload: client/(.*)
