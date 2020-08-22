@@ -18,7 +18,7 @@ const PAPAGO_TRANSLATE_API = 'https://openapi.naver.com/v1/papago/n2mt';
 
 const TTS_PITCH = 0;
 const TTS_SPEED = 1;
-const TTS_VOICE = 'ko-KR-Wavenet-C';
+const TTS_VOICE = 'ko-KR-Wavenet-A';
 const TTS_LOCALE = 'ko-KR';
 const TTS_ENCODING = 'LINEAR16';
 
