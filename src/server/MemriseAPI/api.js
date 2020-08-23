@@ -179,7 +179,7 @@ class MemriseAPI {
 		console.log('Uploading audio for: ', phrase);
 		const audio = await mongodb.read_tts(phrase);
 
-		await fs.writeFile('temp.mp3', audio);
+		await fs.writeFile('tmp/temp.mp3', audio);
 
 		// Gets the thing id in a convoluted way
 		const thingd_id = $('.col_a.col.text')
@@ -198,7 +198,7 @@ class MemriseAPI {
 				.field('cell_id', '3')
 				.field('cell_type', 'column')
 				.field('csrfmiddlewaretoken', `${this.middlwaretoken}`)
-				.attach('f', 'temp.mp3');
+				.attach('f', 'tmp/temp.mp3');
 
 			// console.log(response.body)
 			console.log(`TTS add status: ${response.body['success']}`);
