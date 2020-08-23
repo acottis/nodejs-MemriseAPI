@@ -62,7 +62,7 @@ app.use('/api/memrise', router);
 const port = process.env.PORT || 8080
 
 // Listen for static files
-app.use(express.static('../client'));
+app.use(express.static('public'));
 
 // listen for new requests
 app.listen(port, () => {
