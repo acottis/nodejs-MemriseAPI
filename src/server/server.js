@@ -27,7 +27,7 @@ if (process.env.NODE_ENV == "production") {
 		sameSite: 'None',
 		secure: true,
 	}
-	app.set('trust proxy', 1);
+	// app.set('trust proxy', 1);
 } else {
     cookieSettings = {
 		expires: new Date(Date.now() + 8 * 3600000),
